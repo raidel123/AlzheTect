@@ -2,4 +2,11 @@
 Using a Convolutional Neural Network(CNN) to detect Alzheimer's disease using Tensorflow.
 
 ## Install Requirements:
-pip install -r requirements.txt
+```
+    pip install -r requirements.txt
+```
+
+## Run Program:
+```
+    TDB
+```
