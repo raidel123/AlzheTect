@@ -1,12 +1,28 @@
 # AlzheTect
 Using a Convolutional Neural Network(CNN) to detect Alzheimer's disease using Tensorflow.
 
-## Install Requirements:
+## Requirements
+The installation was performed on a Windows machine using Windows Command Prompt (CMD)
+
+### System Requirements
+Python
+Python pip
+Virtualenv
+'''
+    pip install virtualenv
+'''
+
+### Install Requirements:
 ```
-    pip install -r requirements.txt
+    > pip install -r requirements.txt
 ```
 
 ## Run Program:
+Create a Virtualenv and activate venv
 ```
-    TDB
+    > virtualenv venv
+    > venv\Scripts\activate
+
+    To deactivate venv:
+    > deactivate
 ```
