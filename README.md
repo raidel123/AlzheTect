@@ -8,9 +8,9 @@ The installation was performed on a Windows machine using Windows Command Prompt
 Python
 Python pip
 Virtualenv
-'''
+```
     pip install virtualenv
-'''
+```
 
 ### Install Requirements:
 ```
