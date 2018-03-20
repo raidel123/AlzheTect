@@ -13,11 +13,11 @@ The installation was performed on a Windows machine using Windows Command Prompt
 ```
 
 ### Install Requirements
-To install all requirements together:
+#### To install all requirements together:
 ```
     > pip install -r requirements.txt
 ```
-To install certain components individually:
+#### To install certain components individually:
 Tensorflow
 ```
     > pip install tensorflow
