@@ -21,10 +21,6 @@ The installation was performed on a Windows machine using Windows Command Prompt
 Tensorflow
 ```
     > pip install tensorflow
-
-    OR
-
-    > python -m pip install --upgrade https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.0-py2-none-any.whl
 ```
 
 ## Run Program:
