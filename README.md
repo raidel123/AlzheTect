@@ -5,14 +5,14 @@ Using a Convolutional Neural Network(CNN) to detect Alzheimer's disease using Te
 The installation was performed on a Windows machine using Windows Command Prompt (CMD)
 
 ### System Requirements
-Python
-Python pip
-Virtualenv
+* Python
+* Pip
+* Virtualenv
 ```
     pip install virtualenv
 ```
 
-### Install Requirements:
+### Install Requirements
 ```
     > pip install -r requirements.txt
 ```
