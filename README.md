@@ -1,5 +1,5 @@
 # AlzheTect
-Using a Convolutional Neural Network(CNN) to detect Alzheimer's disease using Tensorflow.
+Using a Deep Neural Network(DNN) to detect Alzheimer's disease using Tensorflow.
 
 ## Requirements
 The installation was performed on a Windows machine using Windows Command Prompt (CMD) with GitBash installed.
