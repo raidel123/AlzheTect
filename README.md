@@ -13,28 +13,32 @@ TODO: Extend installation to Linux OS
     pip3 install virtualenv
 ```
 
-### Install Requirements
+### Installation Requirements
 #### To install all requirements together:
 ```
     > pip3 install -r requirements.txt
 ```
-#### To install certain components individually:
-Tensorflow
-```
-    > pip3 install tensorflow
 
-    OR
-
-    > python -m pip install --upgrade https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-0.12.0-py2-none-any.whl
-
-```
-
-## Run Program:
-Create a Virtualenv and activate venv
+#### Create a virtual environment and activating it:
+Windows
 ```
     > virtualenv venv
     > venv\Scripts\activate
+```
 
-    To deactivate venv:
+Ubuntu
+```
+    > virtualenv venv
+    > source venv\Scripts\activate
+```
+
+#### Deactivating the virtual environment (Same on both OS)
+```
     > deactivate
+```
+
+#### To install certain components individually(if needed):
+Tensorflow
+```
+    > pip3 install tensorflow
 ```
