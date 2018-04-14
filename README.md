@@ -2,7 +2,7 @@
 Using a Convolutional Neural Network(CNN) to detect Alzheimer's disease using Tensorflow.
 
 ## Requirements
-The installation was performed on a Windows machine using Windows Command Prompt (CMD).
+The installation was performed on a Windows machine using Windows Command Prompt (CMD) with GitBash installed.
 TODO: Extend installation to Linux OS
 
 ### System Requirements
@@ -29,7 +29,7 @@ Windows
 Ubuntu
 ```
     > virtualenv venv
-    > source venv\Scripts\activate
+    > source venv\bin\activate
 ```
 
 #### Deactivating the virtual environment (Same on both OS)
