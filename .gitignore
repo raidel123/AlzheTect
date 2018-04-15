@@ -8,6 +8,8 @@ __pycache__/
 
 # tadpole data
 tadpole/
+train/
+test/
 
 # Distribution / packaging
 .Python
