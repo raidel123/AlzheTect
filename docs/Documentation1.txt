@@ -4,14 +4,12 @@ Read data into a pandas numpy array and transform the data into separate files
 - The studies contained a total of: shape(12741, 1907)
 - training data consisted of: shape(12671, 1907)
     > CN data: shape(3810, 1907)
-        >> DNN data: shape(3810, 61)
     > AD data: shape(1544, 1907)
-        >> DNN data: shape(1544, 61)
 - testing data consisted of: shape(7660, 1907)
     > CN data: shape(2797, 1907)
-        >> DNN data: shape(2797. 61)
     > AD data: shape(362, 1907)
-        >> DNN data: shape(362, 61)
+
+==============================================================================
 
 Extract relevant fields for DNN:
 TODO: create a random forest, tree classifier, regression to find important features in determining Alzheimer's disease.
@@ -39,6 +37,8 @@ TODO: create a random forest, tree classifier, regression to find important feat
         a) APOE4
         b) AGE
         c) gender
+
+------------------------------------------------------------------------------
 
 - Used the fields obtained by (Amoroso, et. al.) through a random forest classifier
     1) Cognitive tests
@@ -108,6 +108,8 @@ TODO: create a random forest, tree classifier, regression to find important feat
         a) ST110TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
         b) ST110TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
 
+------------------------------------------------------------------------------
+
 - Non-Overlapping Fields from both suggestions above
     1) Cognitive tests:
         a) MMSE
@@ -140,8 +142,6 @@ TODO: create a random forest, tree classifier, regression to find important feat
     6) Entorhinal Thickness (R)
         a) ST83TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
         b) ST83TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
-
-*********************************left off here*********************************
 
     7) Entorhinal Volume (R)
         a) ST83CV_UCSFFSX_11_02_15_UCSFFSX51_08_01_16
@@ -215,3 +215,15 @@ TODO: create a random forest, tree classifier, regression to find important feat
     23) Pre-central thickness (R)
         a) ST110TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
         b) ST110TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
+
+==============================================================================
+
+Train Data shape after feature extraction (Will be used in DNN)
+- CN data: shape(3810, 61)
+- AD data: shape(1544, 61)
+
+Test Data shape after feature extraction (Will be used in DNN)
+- CN data: shape(2797. 61)
+- AD data: shape(362, 61)
+
+==============================================================================

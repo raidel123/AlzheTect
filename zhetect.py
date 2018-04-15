@@ -75,12 +75,10 @@ test_data = test_dp[['DX_bl','DX',
                        ]]
 
 CN_train_data, AD_train_data = sd.SplitDXData(indata=train_data, file=False)
+CN_test_data, AD_test_data = sd.SplitDXData(indata=test_data, file=False)
 
-print ('CN data shape:', CN_train_data.shape)
-print ('AD data shape:', AD_train_data.shape)
+print ('CN train data shape:', CN_train_data.shape)
+print ('AD train data shape:', AD_train_data.shape)
 
-#print (train_data.head())
-#print (train_data.shape)
-
-#print (test_data.head())
-#print (test_data.shape)
+print ('CN test data shape:', CN_test_data.shape)
+print ('AD test data shape:', AD_test_data.shape)

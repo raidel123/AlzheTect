@@ -37,8 +37,12 @@ Ubuntu
     > deactivate
 ```
 
-#### To install certain components individually(if needed):
+#### To install certain components individually (if needed):
 Tensorflow
 ```
     > pip3 install tensorflow
+```
+Pandas
+```
+    > pip3 install pandas
 ```
