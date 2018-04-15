@@ -1,13 +1,24 @@
 Read data into a pandas numpy array and transform the data into separate files
 - The data for both D1 (training) and D2 (testing) came in one file.
 - I wrote python script (utils/splitdata.py) to extract the data from the main file and separated the candidates by study (D1 or D2).
+- The studies contained a total of: shape(12741, 1907)
+- training data consisted of: shape(12671, 1907)
+    > CN data: shape(3810, 1907)
+        >> DNN data: shape(3810, 61)
+    > AD data: shape(1544, 1907)
+        >> DNN data: shape(1544, 61)
+- testing data consisted of: shape(7660, 1907)
+    > CN data: shape(2797, 1907)
+        >> DNN data: shape(2797. 61)
+    > AD data: shape(362, 1907)
+        >> DNN data: shape(362, 61)
 
 Extract relevant fields for DNN:
 TODO: create a random forest, tree classifier, regression to find important features in determining Alzheimer's disease.
 - Read through the documentation and meaning of different input provided.
 - Biomarkers suggested by ADNI competition.
     1) Cognitive tests:
-        a) MMSE (Baseline)
+        a) MMSE
         b) ADAS11
         c) ADAS13
         d) CDRSB
@@ -98,3 +109,109 @@ TODO: create a random forest, tree classifier, regression to find important feat
         b) ST110TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
 
 - Non-Overlapping Fields from both suggestions above
+    1) Cognitive tests:
+        a) MMSE
+        b) MMSE_bl (Baseline)
+        c) ADAS11
+        d) ADAS13
+        e) CDRSB
+        f) RAVLT_immediate
+
+    2) MRI measures
+        a) Hippocampus
+        b) WholeBrain
+        c) Entorhinal
+        d) MidTemp
+
+    3) PET measures
+        a) FDG
+        b) AV45
+
+    4) Cerebral-spinal fluid measures
+        a) ABETA_UPENNBIOMK9_04_19_17 (amyloid-beta level in CSF)
+        b) TAU_UPENNBIOMK9_04_19_17 (tau level)
+        c) PTAU_UPENNBIOMK9_04_19_17 (phosphorylated tau level)
+
+    5) Risk factors
+        a) APOE4
+        b) AGE
+        c) PTGENDER
+
+    6) Entorhinal Thickness (R)
+        a) ST83TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
+        b) ST83TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
+
+*********************************left off here*********************************
+
+    7) Entorhinal Volume (R)
+        a) ST83CV_UCSFFSX_11_02_15_UCSFFSX51_08_01_16
+
+    8) Entorhinal Thickness (L)
+        a) ST24TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
+        b) ST24TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
+
+    9) Entorhinal Volume (L)
+        a) ST24CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16
+
+    10) Rostral anterior cingulate volume ((a+b)/2)
+        a) ST113CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (R)
+        b) ST54CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (L)
+
+    11) Medial orbito-frontal thickness (L)
+        a) ST39TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16 (Average)
+        b) ST39TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16 (Standard Deviation)
+
+    12) Medial orbito-frontal area (L)
+        a) ST39SA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16
+
+    13) Hippocampus (R) - look at data
+        a) ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Volume)
+        b) RIGHT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16 (size)
+        c) RIGHT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16(size in mm^3)
+        d) RIGHT_HIPPOCAMPUS_UCBERKELEYAV1451_10_17_16 (size)
+        e) RIGHT_HIPPOCAMPUS_SIZE_UCBERKELEYAV1451_10_17_16 ((size ROI in mm^3))
+
+    14) Hippocampus (L) - look at data
+        a) ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Volume)
+        b) LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16 (size)
+        c) LEFT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16 (size in mm^3
+        d) LEFT_HIPPOCAMPUS_UCBERKELEYAV1451_10_17_16 (size)
+        e) LEFT_HIPPOCAMPUS_SIZE_UCBERKELEYAV1451_10_17_16 (size ROI in mm^3)
+
+    15) Inferior Lateral Ventricle (R)
+        a) ST89SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Volume)
+
+    16) Inferior Lateral Ventricle (L)
+        a) ST30SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Volume)
+
+    17) Insula thickness (L)
+        a) ST130TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
+        b) ST130TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
+
+    18) Cuneus Thickness (R)
+        a) ST82TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16 (Average)
+        b) ST82TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16 (Standard Deviation)
+
+    19) Amygdala (L)
+        a) ST12SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Volume)
+        b) LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16 (size)
+        c) LEFT_AMYGDALA_SIZE_UCBERKELEYAV45_10_17_16 (size ROI in mm^3)
+        d) LEFT_AMYGDALA_UCBERKELEYAV1451_10_17_16 (size)
+        e) LEFT_AMYGDALA_SIZE_UCBERKELEYAV1451_10_17_16 (size ROI in mm^3)
+
+    20) Middle temporal thickness (L)
+        a) ST40TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
+        b) ST40TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
+
+    21) Superior temporal area (R)
+        a) ST117SA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16
+
+    22) Posterior cingulate thickness
+        a) ST109TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16 (L Average)
+        b) ST109TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16 (L Standard Deviation)
+        c) ST109TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (R Average)
+        d) ST109TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (R Standard Deviation)
+
+    23) Pre-central thickness (R)
+        a) ST110TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Average)
+        b) ST110TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 (Standard Deviation)
