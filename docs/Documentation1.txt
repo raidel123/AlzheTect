@@ -1,4 +1,4 @@
-Read data into a pandas numpy array and transform the data into separate files
+Read data into a pandas numpy array and transform the data into separate files (old data)
 - The data for both D1 (training) and D2 (testing) came in one file.
 - I wrote python script (utils/splitdata.py) to extract the data from the main file and separated the candidates by study (D1 or D2).
 - The studies contained a total of: shape(12741, 1907)

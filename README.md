@@ -10,7 +10,7 @@ TODO: Extend installation to Linux OS
 * [ Pip3 ](https://pip.pypa.io)
 * [ Virtualenv ](https://virtualenv.pypa.io)
 ```
-    pip3 install virtualenv
+    > pip3 install virtualenv
 ```
 
 ### Installation Requirements
