@@ -227,3 +227,10 @@ Test Data shape after feature extraction (Will be used in DNN)
 - AD data: shape(362, 61)
 
 ==============================================================================
+
+PTGENDER binary representation:
+
+    0 - Female
+    1 - Male
+
+==============================================================================

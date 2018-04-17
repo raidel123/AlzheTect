@@ -40,6 +40,20 @@ def SplitDXDataCSV(indata=r"../train/TADPOLE_D1.csv", cnfile=r"../train/TADPOLE_
     print ('CN data shape:', cn_data.shape)
     print ('AD data shape:', ad_data.shape)
 
+def SplitClassData(indata=r"../train/TADPOLE_D1.csv", file=True):
+
+    if file:
+        tadpole_dp = pd.read_csv(indata, low_memory=False)
+    else:
+        tadpole_dp = indata
+
+    cn_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "CN"]
+    ad_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "AD"]
+    c_data = pd.concat([ad_data,cn_data])
+
+    print ('Total data shape:', tadpole_dp.shape)
+    return c_data
+
 if __name__ == "__main__":
     cn_data, ad_data = SplitDXData(indata=r"../test/TADPOLE_D2.csv")
 
