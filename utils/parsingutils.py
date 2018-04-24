@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import pandas as pd
 import splitdata as sd
 
@@ -57,7 +59,7 @@ def GetModelDataCSV(indata):
     # return model_dp
     return sd.SplitClassData(indata=model_dp, file=False)
 
-def split_valid_test_data(data, fraction=(1 - 0.8)):
+def get_valid_test_data(data, fraction=(1 - 0.8)):
     data_y = data["DX_bl"]
     lb = LabelBinarizer()
     data_y = lb.fit_transform(data_y)

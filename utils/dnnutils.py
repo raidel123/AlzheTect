@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -5,9 +7,9 @@ import pandas as pd
 # Build Neural Network
 from collections import namedtuple
 
-def build_neural_network(train_x, train_y, valid_x, valid_y, hidden_units=10):
+def build_neural_network(data_x, hidden_units=10):
     tf.reset_default_graph()
-    inputs = tf.placeholder(tf.float32, shape=[None, train_x.shape[1]])
+    inputs = tf.placeholder(tf.float32, shape=[None, data_x.shape[1]])
     labels = tf.placeholder(tf.float32, shape=[None, 1])
     learning_rate = tf.placeholder(tf.float32)
     is_training=tf.Variable(True,dtype=tf.bool)

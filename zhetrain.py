@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import sys
 import os
@@ -19,39 +19,32 @@ import splitdata as sd
 import dnnutils as dnnu
 import parsingutils as pu
 
-def TrainTestModel():
-    train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
-    test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
+def TestModel(test):
 
-    '''
-    print ('CN train data shape:', CN_train.shape)
-    print ('AD train data shape:', AD_train.shape)
+    test = test.drop(columns=['DX_bl'])
+    test = test.drop(columns=['DX'])
+    test = TransformData(test)
 
-    print ('CN test data shape:', CN_test.shape)
-    print ('AD test data shape:', AD_test.shape)
-    '''
+    # test_x, test_y, test_x, test_y = pu.get_valid_test_data(train)
+
+    model = dnnu.build_neural_network(data_x=test)
+    restorer = tf.train.Saver()
+    with tf.Session() as sess:
+        restorer.restore(sess,"./alzheimer_detect.ckpt")
+        feed={
+            model.inputs:test,
+            model.is_training:False
+        }
+        test_predict=sess.run(model.predicted,feed_dict=feed)
+
+    print test_predict[:10]
+
+def TrainModel(train):
 
     train = train.drop(columns=['DX'])
-    test = test.drop(columns=['DX'])
+    train = TransformData(train)
 
-    # print (CN_train.head())
-    # CN_train.to_cs("TADPOLE_D1_CN.csv",encoding='utf-8', index=False)
-
-    train = pu.GenderToInt(train)
-    test = pu.GenderToInt(test)
-
-    print(train.dtypes)
-    print(train.head())
-
-    train = train.convert_objects(convert_numeric=True)
-
-    print(train.dtypes)
-    print(train.head())
-
-    train = pu.nan_padding(train)
-    train.to_csv("TADPOLE_D1_Train.csv",encoding='utf-8', index=False)
-
-    train_x, train_y, valid_x, valid_y = pu.split_valid_test_data(train)
+    train_x, train_y, valid_x, valid_y = pu.get_valid_test_data(train)
     print("train_x:{}".format(train_x.shape))
     print("train_y:{}".format(train_y.shape))
     print(train_x)
@@ -60,7 +53,7 @@ def TrainTestModel():
     print("valid_x:{}".format(valid_x.shape))
     print("valid_y:{}".format(valid_y.shape))
 
-    model = dnnu.build_neural_network(train_x=train_x, train_y=train_y, valid_x=valid_x, valid_y=valid_y)
+    model = dnnu.build_neural_network(data_x=train_x)
 
     epochs = 2000
     train_collect = 50
@@ -123,16 +116,52 @@ def TrainTestModel():
     plt.plot(x_collect, valid_acc_collect, "g^")
     plt.show()
 
-    '''
-    print ('CN train data shape:', train.shape)
-    print ('AD train data shape:', test.shape)
+def TransformData(data):
+    # TODO: remove print
+    print ('Data train data shape:', data.shape)
+    transformed = pu.GenderToInt(data)
+    transformed = transformed.convert_objects(convert_numeric=True)
+    transformed = pu.nan_padding(transformed)
 
-    for val in train:
-        print (train[val][0], type(train[val][0]))
-
-    print ('CN train data shape:', train["PTGENDER"][0], type(train["PTGENDER"][0]))
-    print ('AD train data shape:', train.head())
-    '''
+    return transformed
 
 if __name__ == "__main__":
-    TrainTestModel()
+    train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
+    test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
+
+    # TrainModel(train)
+    TestModel(test)
+
+# TODO: Remove comments below, they are only for testing
+
+'''
+train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
+test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
+
+
+print ('CN train data shape:', CN_train.shape)
+print ('AD train data shape:', AD_train.shape)
+
+print ('CN test data shape:', CN_test.shape)
+print ('AD test data shape:', AD_test.shape)
+
+train = train.drop(columns=['DX'])
+test = test.drop(columns=['DX'])
+
+# print (CN_train.head())
+# CN_train.to_cs("TADPOLE_D1_CN.csv",encoding='utf-8', index=False)
+
+train = pu.GenderToInt(train)
+test = pu.GenderToInt(test)
+
+print(train.dtypes)
+print(train.head())
+
+train = train.convert_objects(convert_numeric=True)
+
+print(train.dtypes)
+print(train.head())
+
+train = pu.nan_padding(train)
+train.to_csv("TADPOLE_D1_Train.csv",encoding='utf-8', index=False)
+'''
