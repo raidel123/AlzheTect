@@ -35,7 +35,7 @@ def TestModel(test):
     model = dnnu.build_neural_network(data_x=test)
     restorer = tf.train.Saver()
     with tf.Session() as sess:
-        restorer.restore(sess,"./alzheimer_detect.ckpt")
+        restorer.restore(sess,"trained_model/alzheimer_detect.ckpt")
         feed={
             model.inputs:test,
             model.is_training:False
@@ -56,12 +56,6 @@ def TestModel(test):
     # print evaluation[:10]
 
     evaluation.to_csv("results.csv",index=False)
-
-def ResulUnbinarizer(val):
-    if val == 0:
-        return "AD"
-    else:
-        return "CN"
 
 def TrainModel(train):
 
@@ -131,7 +125,7 @@ def TrainModel(train):
                           "Validation Acc: {:.4f}".format(val_acc))
 
 
-        saver.save(sess, "./alzheimer_detect.ckpt")
+        saver.save(sess, "trained_model/alzheimer_detect.ckpt")
 
     plt.plot(x_collect, train_loss_collect, "r--")
     plt.plot(x_collect, valid_loss_collect, "g^")
@@ -150,43 +144,15 @@ def TransformData(data):
 
     return transformed
 
+def ResulUnbinarizer(val):
+    if val == 0:
+        return "AD"
+    else:
+        return "CN"
+
 if __name__ == "__main__":
     train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
     test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
 
     # TrainModel(train)
     TestModel(test)
-
-
-# TODO: Remove comments below, they are only for testing
-'''
-train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
-test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
-
-
-print ('CN train data shape:', CN_train.shape)
-print ('AD train data shape:', AD_train.shape)
-
-print ('CN test data shape:', CN_test.shape)
-print ('AD test data shape:', AD_test.shape)
-
-train = train.drop(columns=['DX'])
-test = test.drop(columns=['DX'])
-
-# print (CN_train.head())
-# CN_train.to_cs("TADPOLE_D1_CN.csv",encoding='utf-8', index=False)
-
-train = pu.GenderToInt(train)
-test = pu.GenderToInt(test)
-
-print(train.dtypes)
-print(train.head())
-
-train = train.convert_objects(convert_numeric=True)
-
-print(train.dtypes)
-print(train.head())
-
-train = pu.nan_padding(train)
-train.to_csv("TADPOLE_D1_Train.csv",encoding='utf-8', index=False)
-'''

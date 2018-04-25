@@ -2,47 +2,41 @@
 Using a Deep Neural Network(DNN) to detect early Alzheimer's disease using Tensorflow.
 
 ## Requirements
-The installation was performed on a Windows machine using Windows Command Prompt (CMD) with GitBash installed.
-TODO: Extend installation to Linux OS
+The installation was performed on both a Windows machine using a bash shell on Windows Command Prompt (CMD) with [ GitBash ](https://gitforwindows.org/) installed, and was also installed on a [ Ubuntu 16.04 ](https://www.ubuntu.com/download/desktop) terminal.
 
-### System Requirements
-* [ Python 3.x ](https://www.python.org/downloads/)
-* [ Pip3 ](https://pip.pypa.io)
+#### System Requirements
+* [ Python 2.x ](https://www.python.org/downloads/)
+* [ Pip ](https://pip.pypa.io)
 * [ Virtualenv ](https://virtualenv.pypa.io)
+
 ```
-    > pip3 install virtualenv
+    $ pip install virtualenv
 ```
 
-### Installation Requirements
-#### To install all requirements together:
+####  Installation Requirements
+Setting up the virtual environment and installing requirements:
 ```
-    > pip3 install -r requirements.txt
-```
-
-#### Create a virtual environment and activating it:
-Windows
-```
-    > virtualenv venv
-    > venv\Scripts\activate
+    $ virtualenv venv
+    $ source venv\bin\activate
+    $ pip install -r requirements.txt
 ```
 
-Ubuntu
+Deactivating the virtual environment
 ```
-    > virtualenv venv
-    > source venv\bin\activate
-```
-
-#### Deactivating the virtual environment (Same on both OS)
-```
-    > deactivate
+    $ deactivate
 ```
 
 #### To install certain components individually (if needed):
 Tensorflow
 ```
-    > pip3 install tensorflow
+    $ pip install tensorflow
 ```
 Pandas
 ```
-    > pip3 install pandas
+    $ pip install pandas
+```
+
+## Run
+```
+    $ python alzhetect.py
 ```
