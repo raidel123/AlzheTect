@@ -9,9 +9,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 
+# if any of the fields in the top line are changed in the list below
+# change the value within nan_padding() function for the relevant fields
+# starting positions
 def GetRelevantFields():
     return  [
-            'DX_bl','DX',
+            'RID','DX_bl','DX',
             'MMSE', 'MMSE_bl', 'ADAS11', 'ADAS13','CDRSB', 'RAVLT_immediate',
             'Hippocampus','WholeBrain','Entorhinal', 'MidTemp',
             'FDG','AV45',
@@ -39,7 +42,7 @@ def GetRelevantFields():
 
 # getting cannot convert string to float errors
 def nan_padding(data):
-    for column in GetRelevantFields()[2:]:
+    for column in GetRelevantFields()[3:]:
         imputer=Imputer()
         data[column]=imputer.fit_transform(data[column].values.reshape(-1,1))
     return data

@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 # Feature Engineering
 from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import Binarizer
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 
@@ -21,8 +22,12 @@ import parsingutils as pu
 
 def TestModel(test):
 
+    test_diagnosis_id = test["RID"]
+    baseline_diagnosis = test["DX_bl"]
+
     test = test.drop(columns=['DX_bl'])
     test = test.drop(columns=['DX'])
+    test = test.drop(columns=['RID'])
     test = TransformData(test)
 
     # test_x, test_y, test_x, test_y = pu.get_valid_test_data(train)
@@ -37,11 +42,31 @@ def TestModel(test):
         }
         test_predict=sess.run(model.predicted,feed_dict=feed)
 
-    print test_predict[:10]
+    # print test_predict
+
+    binarizer=Binarizer(0.5)
+    test_predict_result=binarizer.fit_transform(test_predict)
+    test_predict_result=test_predict_result.astype(np.int32)
+    # print test_predict_result[:10]
+
+    diagnosis_id = test_diagnosis_id.copy()
+    evaluation = diagnosis_id.to_frame()
+    evaluation["BaselineDiagnosis"] = baseline_diagnosis
+    evaluation["Prediction"] = [ ResulUnbinarizer(val) for val in test_predict_result ]
+    # print evaluation[:10]
+
+    evaluation.to_csv("results.csv",index=False)
+
+def ResulUnbinarizer(val):
+    if val == 0:
+        return "AD"
+    else:
+        return "CN"
 
 def TrainModel(train):
 
     train = train.drop(columns=['DX'])
+    train = train.drop(columns=['RID'])
     train = TransformData(train)
 
     train_x, train_y, valid_x, valid_y = pu.get_valid_test_data(train)
@@ -132,8 +157,8 @@ if __name__ == "__main__":
     # TrainModel(train)
     TestModel(test)
 
-# TODO: Remove comments below, they are only for testing
 
+# TODO: Remove comments below, they are only for testing
 '''
 train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
 test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
