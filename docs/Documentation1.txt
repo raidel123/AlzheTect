@@ -219,12 +219,12 @@ TODO: create a random forest, tree classifier, regression to find important feat
 ==============================================================================
 
 Train Data shape after feature extraction (Will be used in DNN)
-- CN data: shape(3810, 61)
-- AD data: shape(1544, 61)
+- CN data: shape(3810, 59)
+- AD data: shape(1544, 59)
 
 Test Data shape after feature extraction (Will be used in DNN)
-- CN data: shape(2797. 61)
-- AD data: shape(362, 61)
+- CN data: shape(2797. 59)
+- AD data: shape(362, 59)
 
 ==============================================================================
 
@@ -234,3 +234,15 @@ PTGENDER binary representation:
     1 - Male
 
 ==============================================================================
+
+Total percent correct:
+    = total_correct/total = 3021/3159 = 0.9563 * 100 = 95.63%
+
+Total percent incorrect (not really important):
+    = 1 - total percent correct = 1 - 0.9563 = 0.0437 * 100 =  4.37%
+
+Percent of AD predictions correct:
+    correct AD predictions / total AD = 340 / 362 = 0.9392 * 100 = 93.92%
+
+Percent of CN predictions correct:
+    correct CN predictions / total CN = 2681 / 2797 = 0.9585 * 100= 95.85%

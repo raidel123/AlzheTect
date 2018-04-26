@@ -5,7 +5,7 @@ import os
 import tensorflow as tf
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # Feature Engineering
 from sklearn.preprocessing import Imputer
@@ -19,6 +19,7 @@ sys.path.append(os.getcwd() + "/utils")
 import splitdata as sd
 import dnnutils as dnnu
 import parsingutils as pu
+import plotresults as pr
 
 def TestModel(test):
 
@@ -127,6 +128,7 @@ def TrainModel(train):
 
         saver.save(sess, "trained_model/alzheimer_detect.ckpt")
 
+    '''
     plt.plot(x_collect, train_loss_collect, "r--")
     plt.plot(x_collect, valid_loss_collect, "g^")
     plt.show()
@@ -134,6 +136,7 @@ def TrainModel(train):
     plt.plot(x_collect, train_acc_collect, "r--")
     plt.plot(x_collect, valid_acc_collect, "g^")
     plt.show()
+    '''
 
 def TransformData(data):
     # TODO: remove print
@@ -153,6 +156,8 @@ def ResulUnbinarizer(val):
 if __name__ == "__main__":
     train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
     test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
+
+    correct_prediction, correct_AD_prediction, correct_CN_prediction = pr.CorrectResults(r"results/results.csv")
 
     # TrainModel(train)
     TestModel(test)
