@@ -1,2 +1,0 @@
-model_checkpoint_path: "alzheimer_detect.ckpt"
-all_model_checkpoint_paths: "alzheimer_detect.ckpt"
