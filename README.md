@@ -38,5 +38,5 @@ Pandas
 
 ## Run
 ```
-    $ python alzhetect.py
+    $ python trunk/src/alzhetect.py
 ```
