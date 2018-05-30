@@ -7,6 +7,16 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+# get main project path (in case this file is compiled alone)
+if os.name == 'nt':
+    # Windows
+    context = os.getcwd().split('\\')
+else:
+    # Ubuntu
+    context = os.getcwd().split('/')
+
+context = '/'.join(context[:context.index('AlzheTect') + 1])
+
 def CorrectResults(results_file):
     file_dp = pd.read_csv(results_file, low_memory=False)
 
@@ -47,7 +57,7 @@ def CorrectResults(results_file):
 
     plt.bar(range(len(D)), list(D.values()), tick_label=list(D.keys()), color=['r', 'g', 'b'], align='center')
 
-    plt.savefig('results/ModelAccuracy.png')
-    # plt.show()
+    plt.savefig(context + '/trunk/src/results/ModelAccuracy.png')
+    plt.show()
 
     return  total_result, correctAD_result, correctCN_result

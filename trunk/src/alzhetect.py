@@ -14,7 +14,17 @@ from sklearn.preprocessing import Binarizer
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 
-sys.path.append(os.getcwd() + "/utils")
+# get main project path (in case this file is compiled alone)
+if os.name == 'nt':
+    # Windows
+    context = os.getcwd().split('\\')
+else:
+    # Ubuntu
+    context = os.getcwd().split('/')
+
+context = '/'.join(context[:context.index('AlzheTect') + 1])
+
+sys.path.append(context + "/trunk/src/utils")
 
 import splitdata as sd
 import dnnutils as dnnu
@@ -36,7 +46,8 @@ def TestModel(test):
     model = dnnu.build_neural_network(data_x=test)
     restorer = tf.train.Saver()
     with tf.Session() as sess:
-        restorer.restore(sess,"trained_model/alzheimer_detect.ckpt")
+        # TODO: add absolute path to properly index directories
+        restorer.restore(sess,context + r"/trunk/src/trained_model/alzheimer_detect.ckpt")
         feed={
             model.inputs:test,
             model.is_training:False
@@ -56,7 +67,8 @@ def TestModel(test):
     evaluation["Prediction"] = [ ResulUnbinarizer(val) for val in test_predict_result ]
     # print evaluation[:10]
 
-    evaluation.to_csv("results.csv",index=False)
+    # TODO: add absolute path to properly index directories
+    evaluation.to_csv(context + r"/trunk/src/results/results.csv",index=False)
 
 def TrainModel(train):
 
@@ -126,7 +138,7 @@ def TrainModel(train):
                           "Validation Acc: {:.4f}".format(val_acc))
 
 
-        saver.save(sess, "trained_model/alzheimer_detect.ckpt")
+        saver.save(sess, context + r"/trunk/src/trained_model/alzheimer_detect.ckpt")
 
     '''
     plt.plot(x_collect, train_loss_collect, "r--")
@@ -154,10 +166,15 @@ def ResulUnbinarizer(val):
         return "CN"
 
 if __name__ == "__main__":
-    train = pu.GetModelDataCSV(r"train/TADPOLE_D1.csv")
-    test = pu.GetModelDataCSV(r"test/TADPOLE_D2.csv")
 
-    correct_prediction, correct_AD_prediction, correct_CN_prediction = pr.CorrectResults(r"results/results.csv")
+    # TODO: add absolute path to properly index directories
+    train = pu.GetModelDataCSV(context + r"/trunk/src/train/TADPOLE_D1.csv")
+
+    # TODO: add absolute path to properly index directories
+    test = pu.GetModelDataCSV(context + r"/trunk/src/test/TADPOLE_D2.csv")
+
+    # TODO: add absolute path to properly index directories
+    correct_prediction, correct_AD_prediction, correct_CN_prediction = pr.CorrectResults(context + r"/trunk/src/results/results.csv")
 
     # TrainModel(train)
-    TestModel(test)
+    # TestModel(test)
