@@ -2,7 +2,7 @@
 Using a Deep Neural Network(DNN) to detect early Alzheimer's disease using Tensorflow.
 
 ## Requirements
-The installation was performed on both a Windows machine using a bash shell on Windows Command Prompt (CMD) with [ GitBash ](https://gitforwindows.org/) installed, and was also installed on a [ Ubuntu 16.04 ](https://www.ubuntu.com/download/desktop) terminal.
+The installation was performed on a [ Ubuntu 16.04 ](https://www.ubuntu.com/download/desktop) terminal.
 
 #### System Requirements
 * [ Python 2.x ](https://www.python.org/downloads/)
