@@ -40,3 +40,6 @@ Pandas
 ```
     $ python trunk/src/alzhetect.py
 ```
+
+## Results
+After executing the main script using the command above ([Run](#Run)), the results will be saved to the results directory.
