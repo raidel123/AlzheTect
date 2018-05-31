@@ -108,7 +108,7 @@ def TestModel(test):
     evaluation["Prediction"] = [ ResulUnbinarizer(val) for val in test_predict_result ]
     # print evaluation[:10]
 
-    evaluation.to_csv(context + r"/trunk/src/results/results.csv",index=False)
+    evaluation.to_csv(context + r"/results/results.csv",index=False)
 
 def TrainModel(train):
 

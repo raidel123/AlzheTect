@@ -31,4 +31,4 @@ if __name__ == "__main__":
     # dnnu.TrainModel(train)
     dnnu.TestModel(test)
 
-    # correct_prediction, correct_AD_prediction, correct_CN_prediction = pr.CorrectResults(context + r"/trunk/src/results/results.csv")
+    # correct_prediction, correct_AD_prediction, correct_CN_prediction = pr.CorrectResults(context + r"/results/results.csv")
