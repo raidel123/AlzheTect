@@ -239,7 +239,7 @@ def GetRelevantFields():
 
 # getting cannot convert string to float errors
 def nan_padding(data):
-    for column in GetRelevantFields()[3:]:
+    for column in GetRelevantFields()[4:]:
         imputer=Imputer()
         data[column]=imputer.fit_transform(data[column].values.reshape(-1,1))
     return data
