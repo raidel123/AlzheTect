@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+import matplotlib
+matplotlib.use('Agg')
 import sys
 import os
 import tensorflow as tf
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Build Neural Network
 from collections import namedtuple
@@ -97,6 +100,7 @@ def TestModel(test):
 
     # print test_predict
 
+    print test_predict
     binarizer=Binarizer(0.5)
     test_predict_result=binarizer.fit_transform(test_predict)
     test_predict_result=test_predict_result.astype(np.int32)
@@ -114,7 +118,7 @@ def TrainModel(train):
 
     train = train.drop(columns=['DX'])
     train = train.drop(columns=['RID'])
-    train = test.drop(columns=['EXAMDATE'])
+    train = train.drop(columns=['EXAMDATE'])
     train = TransformData(train)
 
     train_x, train_y, valid_x, valid_y = get_valid_test_data(train)
@@ -133,7 +137,7 @@ def TrainModel(train):
     train_print=train_collect*2
 
     learning_rate_value = 0.001
-    batch_size=16
+    batch_size=12
 
     x_collect = []
     train_loss_collect = []
@@ -181,7 +185,6 @@ def TrainModel(train):
 
         saver.save(sess, context + r"/trunk/src/trained_model/alzheimer_detect.ckpt")
 
-    '''
     plt.plot(x_collect, train_loss_collect, "r--")
     plt.plot(x_collect, valid_loss_collect, "g^")
     plt.show()
@@ -189,7 +192,6 @@ def TrainModel(train):
     plt.plot(x_collect, train_acc_collect, "r--")
     plt.plot(x_collect, valid_acc_collect, "g^")
     plt.show()
-    '''
 
 def TransformData(data):
     # TODO: remove print
@@ -259,10 +261,28 @@ def GetModelDataCSV(indata):
     # return model_dp
     return sd.SplitClassData(indata=model_dp, file=False)
 
+def GetClass(data):
+    fields = []
+    for val in data:
+        if val == "AD":
+            fields.append(np.array([np.int64(0)]))
+        elif val == 'CN':
+            fields.append(np.array([np.int64(1)]))
+        else:
+            fields.append(np.array([np.int64(2)]))
+
+    fields = np.array(fields)
+    return fields
+
 def get_valid_test_data(data, fraction=(1 - 0.8)):
     data_y = data["DX_bl"]
     lb = LabelBinarizer()
     data_y = lb.fit_transform(data_y)
+    #data_y = GetClass(data_y)
+    print 'type:', type(data_y), data_y
+    print 'innertype:', type(data_y[0]), data_y[0]
+    print 'innerinnertype:', type(data_y[0][0]), data_y[0][0]
+    # print 'type', type(data_y)
 
     data_x = data.drop(["DX_bl"], axis=1)
 

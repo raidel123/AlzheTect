@@ -1,2 +1,2 @@
-model_checkpoint_path: "alzheimer_detect.ckpt"
-all_model_checkpoint_paths: "alzheimer_detect.ckpt"
+model_checkpoint_path: "/mnt/c/Users/Raidel/Documents/School/FSU/Grad/Graduation_Project/AlzheTect/trunk/src/trained_model/alzheimer_detect.ckpt"
+all_model_checkpoint_paths: "/mnt/c/Users/Raidel/Documents/School/FSU/Grad/Graduation_Project/AlzheTect/trunk/src/trained_model/alzheimer_detect.ckpt"

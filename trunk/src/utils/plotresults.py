@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
+import matplotlib
+matplotlib.use('Agg')
 import os
 import sys
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # get main project path (in case this file is compiled alone)
@@ -55,9 +55,9 @@ def CorrectResults(results_file):
 
     D = {'Total Correct': total_result, 'AD Correct': correctAD_result, 'CN Correct': correctCN_result}
 
+    plt.ylim(ymax=100)
     plt.bar(range(len(D)), list(D.values()), tick_label=list(D.keys()), color=['r', 'g', 'b'], align='center')
-
     plt.savefig(context + '/results/ModelAccuracy.png')
-    plt.show()
+    # plt.show()
 
     return  total_result, correctAD_result, correctCN_result
