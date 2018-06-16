@@ -15,7 +15,7 @@ header {
 }
 
 section {
-  padding: 150px 0;
+  padding: 100px 0;
 }
 
 .tab-buttons {
@@ -54,7 +54,7 @@ section {
 
 .navbar-brand-img {
   max-width: 60px;
-  margin-right: 10px;
+  margin-right: 20px;
 }
 
 .color1-background {
@@ -67,6 +67,10 @@ section {
 
 .color3-background {
 	background-color: #ffe36c;
+}
+
+.black-txt {
+  color: black;
 }
 
 /*

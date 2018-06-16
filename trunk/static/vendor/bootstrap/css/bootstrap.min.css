@@ -362,7 +362,7 @@ template {
 
 .lead {
   font-size: 1.25rem;
-  font-weight: 300
+  font-weight: 300;
 }
 
 .display-1 {
@@ -8214,6 +8214,10 @@ a.bg-dark:focus, a.bg-dark:hover, button.bg-dark:focus, button.bg-dark:hover {
 
 .text-white {
   color: #fff !important
+}
+
+.text-black {
+  color: #000 !important
 }
 
 .text-primary {
