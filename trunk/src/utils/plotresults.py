@@ -57,7 +57,7 @@ def CorrectResults(results_file):
 
     plt.ylim(ymax=100)
     plt.bar(range(len(D)), list(D.values()), tick_label=list(D.keys()), color=['r', 'g', 'b'], align='center')
-    plt.savefig(context + '/results/ModelAccuracy.png')
+    plt.savefig(context + '/trunk/results/ModelAccuracy.png')
     # plt.show()
 
     return  total_result, correctAD_result, correctCN_result

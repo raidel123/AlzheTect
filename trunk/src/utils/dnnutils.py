@@ -112,7 +112,7 @@ def TestModel(test):
     evaluation["Prediction"] = [ ResulUnbinarizer(val) for val in test_predict_result ]
     # print evaluation[:10]
 
-    evaluation.to_csv(context + r"/results/results.csv",index=False)
+    evaluation.to_csv(context + r"/trunk/results/results.csv",index=False)
 
 def TrainModel(train):
 
@@ -187,11 +187,11 @@ def TrainModel(train):
 
     plt.plot(x_collect, train_loss_collect, "r--")
     plt.plot(x_collect, valid_loss_collect, "g^")
-    plt.show()
+    # plt.show()
 
     plt.plot(x_collect, train_acc_collect, "r--")
     plt.plot(x_collect, valid_acc_collect, "g^")
-    plt.show()
+    # plt.show()
 
 def TransformData(data):
     # TODO: remove print
