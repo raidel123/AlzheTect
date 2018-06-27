@@ -5,35 +5,96 @@
   <div class="container under-nav">
     <div class="row">
       <ul class="tab-buttons centered-pills">
-        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background">Statistics</button></li>
-        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background">Visualizations</button></li>
-        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background">Data</button></li>
+        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background"><a href="#stats-selection">Statistics</a></button></li>
+        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background"><a href="#visualizations">Visualizations</a></button></li>
+        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background"><a href="#data">Data</a></button></li>
       </ul>
     </div>
     <hr>
   </div>
 
-  <section id="about">
+  <section id="stats-selection">
     <div class="container">
       <div class="row">
-        <div class="col-lg-8 mx-auto">
+        <div class="col-lg-12 mx-auto">
           <h2>TODO</h2>
           <ul>
             <li>Add data to DB</li>
             <li>Provide boxes to select and populate statistics</li>
             <li>Add algorithm to figure out what the best alzheimer indicators are (random forest selection, decision trees, etc)</li>
             <li>Visualize data using graphs, charts, tables, etc.</li>
+            <li>Change logo to a brain</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="stats" class="bg-light">
+  <section id="stats-selection">
     <div class="container">
       <div class="row">
-        <div class="col-lg-8 mx-auto">
-          <h2>Services we offer</h2>
+        <div class="col-lg-12 mx-auto">
+          <h2>Select Data To Visualize</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-11 col-md-11 mx-auto">
+          <div class="row w3-card mx-auto w3-margin-top">
+            <div class="col-lg-4 col-md-4 col-sm-12 mx-auto">
+
+              {% for i in range(0, (checkboxes|length/2)|int) %}
+
+              <p>
+                <input value={{checkboxes[i].value}} class="w3-check" type="checkbox" onclick="box_checked(this);">
+                <label>{{checkboxes[i].label}}</label>
+              </p>
+
+              {% endfor %}
+
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12 mx-auto" >
+
+              {% for i in range((checkboxes|length/2)|int, checkboxes|length) %}
+
+              <p>
+                <input value={{checkboxes[i].value}} class="w3-check" type="checkbox" onclick="box_checked(this);">
+                <label>{{checkboxes[i].label}}</label>
+              </p>
+
+              {% endfor %}
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="visualizations" class="bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 mx-auto">
+          <h2>Visualizations</h2>
+          <div class="row mx-auto w3-margin-top">
+            <div class="w3-card-4 col-lg-5 col-md-5 col-sm-12 mx-auto">
+              <div id="container" style="height: 400px"></div>
+            </div>
+            <div class="w3-card-4 col-lg-5 col-md-5 col-sm-12 mx-auto" >
+              <div id="container2" style="height: 400px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="data">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 mx-auto">
+          <h2>Data</h2>
           <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut optio velit inventore, expedita quo laboriosam possimus ea consequatur vitae, doloribus consequuntur ex. Nemo assumenda laborum vel, labore ut velit dignissimos.</p>
         </div>
       </div>

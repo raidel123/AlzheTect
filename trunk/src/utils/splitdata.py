@@ -115,7 +115,7 @@ def SplitClassData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv", file=Tru
     ad_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "AD"]
     mci_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "MCI"]
     # print mci_data.head()
-    #c_data = pd.concat([ad_data,cn_data, mci_data])
+    # c_data = pd.concat([ad_data,cn_data, mci_data])
     c_data = pd.concat([ad_data,cn_data])
 
     print ('Total data shape:', tadpole_dp.shape)
