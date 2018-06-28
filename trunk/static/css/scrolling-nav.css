@@ -79,6 +79,14 @@ section {
   display: none;
 }
 
+.margin-top64{
+  margin-top: 64px;
+}
+
+.big-button{
+  height: 60px;
+}
+
 /*
 .centered-pills { text-align:center; }
 .centered-pills ul { display:inline-block; }

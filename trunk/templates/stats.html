@@ -5,30 +5,13 @@
   <div class="container under-nav">
     <div class="row">
       <ul class="tab-buttons centered-pills">
-        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background"><a href="#stats-selection">Statistics</a></button></li>
-        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background"><a href="#visualizations">Visualizations</a></button></li>
-        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background"><a href="#data">Data</a></button></li>
+        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background big-button" onclick="window.location='#stats-selection'">Statistics</button></li>
+        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background big-button" onclick="window.location='#visualizations'">Visualizations</button></li>
+        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background big-button" onclick="window.location='#data'">Data</button></li>
       </ul>
     </div>
     <hr>
   </div>
-
-  <section id="stats-selection">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12 mx-auto">
-          <h2>TODO</h2>
-          <ul>
-            <li>Add data to DB</li>
-            <li>Provide boxes to select and populate statistics</li>
-            <li>Add algorithm to figure out what the best alzheimer indicators are (random forest selection, decision trees, etc)</li>
-            <li>Visualize data using graphs, charts, tables, etc.</li>
-            <li>Change logo to a brain</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <section id="stats-selection">
     <div class="container">
@@ -45,7 +28,7 @@
               {% for i in range(0, (checkboxes|length/2)|int) %}
 
               <p>
-                <input value={{checkboxes[i].value}} class="w3-check" type="checkbox" onclick="box_checked(this);">
+                <input id="{{checkboxes[i].value}}" value="{{checkboxes[i].value}}" class="w3-check" type="checkbox" onclick='box_checked(this, {{checkboxes[i]|tojson}})'>
                 <label>{{checkboxes[i].label}}</label>
               </p>
 
@@ -58,7 +41,7 @@
               {% for i in range((checkboxes|length/2)|int, checkboxes|length) %}
 
               <p>
-                <input value={{checkboxes[i].value}} class="w3-check" type="checkbox" onclick="box_checked(this);">
+                <input id="{{checkboxes[i].value}}" value="{{checkboxes[i].value}}" class="w3-check" type="checkbox" onclick='box_checked(this, {{checkboxes[i]|tojson}})'>
                 <label>{{checkboxes[i].label}}</label>
               </p>
 
@@ -77,13 +60,8 @@
       <div class="row">
         <div class="col-lg-12 mx-auto">
           <h2>Visualizations</h2>
-          <div class="row mx-auto w3-margin-top">
-            <div class="w3-card-4 col-lg-5 col-md-5 col-sm-12 mx-auto">
-              <div id="container" style="height: 400px"></div>
-            </div>
-            <div class="w3-card-4 col-lg-5 col-md-5 col-sm-12 mx-auto" >
-              <div id="container2" style="height: 400px"></div>
-            </div>
+          <div id="visualsboard" class="row mx-auto w3-margin-top">
+
           </div>
         </div>
       </div>

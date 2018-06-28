@@ -24,6 +24,6 @@
   $('body').scrollspy({
     target: '#mainNav',
     offset: 54
-  });
+  }); 
 
 })(jQuery); // End of use strict
