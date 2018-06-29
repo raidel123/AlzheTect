@@ -86,8 +86,5 @@ def ContactPage():
 
 # ----------------------------------------------------------------------------
 
-def GenderStats(data):
-    print data
-
 if __name__ == "__main__":
     app.run()
