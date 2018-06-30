@@ -30,6 +30,7 @@ def OpenConnection(db_file='src/sqldb/alzhetect.db'):
         # print(sqlite3.version)
     except Error as e:
         print(e)
+        print(db_file)
 
     return conn
 
