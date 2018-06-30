@@ -32,7 +32,7 @@ def OpenConnection(db_file='src/sqldb/alzhetect.db'):
         print(e)
         print(db_file)
 
-    return "5"
+    return conn
 
 def CloseConnection(conn):
     conn.close()
