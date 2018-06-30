@@ -19,7 +19,6 @@ context = '/'.join(context[:context.index('AlzheTect') + 1])
 def OpenConnection(db_file='src/sqldb/alzhetect.db'):
 
     print db_file
-    global conn
     """ create a database connection to a SQLite database """
     try:
         conn = sqlite3.connect(db_file)
@@ -30,7 +29,7 @@ def OpenConnection(db_file='src/sqldb/alzhetect.db'):
         # print(sqlite3.version)
     except Error as e:
         print(e)
-        print(db_file)
+        conn = "Error"
 
     return conn
 
