@@ -21,6 +21,10 @@ sys.path.append(rootContext + "/trunk/src/utils")
 import dbconnect as db
 '''
 
+sys.path.append(appContext + "/src/utils")
+
+import dbconnect as db
+
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/', methods=['GET', 'POST'])
 def HomePage():
