@@ -35,6 +35,7 @@ def HomePage():
 @app.route('/stats/', methods=['GET', 'POST'])
 def StatsPage():
 
+    global conn 
     conn = db.OpenConnection()
 
     genderStats = [["Male", db.QueryDB("SELECT COUNT(PTGENDER) FROM patients WHERE PTGENDER='Male';", conn).iloc[0]['COUNT(PTGENDER)']],
