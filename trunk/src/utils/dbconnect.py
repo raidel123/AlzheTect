@@ -21,8 +21,7 @@ def OpenConnection(db_file='src/sqldb/alzhetect.db'):
     print db_file
     """ create a database connection to a SQLite database """
     try:
-        global conn
-        conn = sqlite3.connect(db_file)
+        connct = sqlite3.connect(db_file)
 
         # cursor = conn.cursor()
         # cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -31,7 +30,7 @@ def OpenConnection(db_file='src/sqldb/alzhetect.db'):
     except Error as e:
         print(e)
 
-    return conn
+    return connct
 
 def CloseConnection(conn):
     conn.close()
