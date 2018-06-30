@@ -35,7 +35,7 @@ def HomePage():
 @app.route('/stats/', methods=['GET', 'POST'])
 def StatsPage():
 
-    conn = db.OpenConnection(appContext + 'src/sqldb/alzhetect.db')
+    conn = db.OpenConnection(appContext + '/src/sqldb/alzhetect.db')
 
     genderStats = [["Male", db.QueryDB("SELECT COUNT(PTGENDER) FROM patients WHERE PTGENDER='Male';", conn).iloc[0]['COUNT(PTGENDER)']],
                  ["Female", db.QueryDB("SELECT COUNT(PTGENDER) FROM patients WHERE PTGENDER='Female';", conn).iloc[0]['COUNT(PTGENDER)']]]
