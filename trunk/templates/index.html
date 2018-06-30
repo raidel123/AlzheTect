@@ -4,8 +4,17 @@
 
   <header class="bg-primary">
     <div class="container text-center">
-      <h1 class="text-white">A Tool for Alzheimer Diagnosis and Statistics</h1>
-      <p class="lead text-black">Using a Deep Neural Network (DNN) to detect Alzheimer's disease using Tensorflow</p>
+      <div class="row">
+        <h1 class="col-lg-12 mx-auto text-white">A Tool for Alzheimer Diagnosis and Statistics</h1>
+        <div class="col-lg-5 mx-auto w3-margin-top">
+          <a title="© Nevit Dilmen [CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], from Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:3DPX-002386_Atrophic_Brain_Nevit_Dilmen.stl" target="_blank" >
+            <img height="auto" width="85%" alt="3DPX-002386 Atrophic Brain Nevit Dilmen" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/3DPX-002386_Atrophic_Brain_Nevit_Dilmen.stl/512px-3DPX-002386_Atrophic_Brain_Nevit_Dilmen.stl.png">
+          </a>
+        </div>
+        <div class="col-lg-12 mx-auto w3-margin-top">
+          <p class="lead text-white">Using a Deep Neural Network (DNN) to detect Alzheimer's disease using Tensorflow</p>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -14,9 +23,26 @@
       <div class="row">
         <div class="col-lg-12 mx-auto">
           <h2>Background</h2>
-          <p class="lead">
-            One of the most obscure yet significantly debilitating diseases currently facing humanity is alzheimer’s disease (AD). In 2010, there were 4.7 million individuals with alzheimer, it is predicted that by 2050 the figure will be 13.8 million. To be able to effectively treat AD, it is important that we are able to identify it early in individuals. This study will focus on identifying biomarkers (features) that are strong indicators of progressive AD disease through supervised machine learning models. Then, the selected features will be used along with deep learning models to properly classify mild cognitively impaired (MCI) patients. In this research we aim to predict if a patient, believed to have MCI, is still cognitively normal (CN) or may already be showing potential signs of AD.
-          </p>
+          <div class="col-lg-10">
+            <p>
+              One of the most obscure yet significantly debilitating diseases
+              currently facing humanity is alzheimer’s disease (AD). In 2010,
+              there were 4.7 million individuals with alzheimer, it is predicted
+              that by 2050 the figure will be 13.8 million. To be able to
+              effectively treat AD, it is important that we are able to identify
+              it early in individuals. This study will focus on identifying
+              biomarkers (features) that are strong indicators of progressive
+              AD disease through supervised machine learning models. Then, the
+              selected features will be used along with deep learning models to
+              properly classify mild cognitively impaired (MCI) patients. In
+              this research we aim to predict if a patient, believed to have
+              MCI, is still considered cognitively normal (CN) or may already
+              be showing potential signs of Alzheimer's Disease (AD).
+            </p>
+          </div>
+          <div class="row col-lg-6 mx-auto">
+            <img class="mx-auto margin-top64" src="{{ url_for('static', filename='img/brain/PET_progression.jpg') }}" alt="PET progression" height="auto" width="85%">
+          </div>
         </div>
       </div>
     </div>
@@ -27,7 +53,18 @@
       <div class="row">
         <div class="col-lg-12 mx-auto">
           <h2>Details</h2>
-          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut optio velit inventore, expedita quo laboriosam possimus ea consequatur vitae, doloribus consequuntur ex. Nemo assumenda laborum vel, labore ut velit dignissimos.</p>
+          <div class="col-lg-10">
+            <p>In this research, we aim to study individuals with mild cognitive impairment (MCI), specifically the early (EMCI) to late (LMCI) stages of the disease. The motivation for the research came from a challenge posted on <em>Kaggle</em> [2], by a UCL group focusing on Progression Of Neurodegenerative Disease&nbsp;(POND). The challenge is called The Alzheimer&rsquo;s Disease Prediction Of Longitudinal Evolution (<em>TADPOLE</em>)**, which aims at the goal of predicting which subject currently believed to have mild cognitive impairment will likely turn into an alzheimer&rsquo;s patient in a relatively short period of time (1-5 years).</p>
+            <p>The data provided for the challenge contains labels and detailed information for 3 main categories of patients:</p>
+            <ul>
+            <li><strong>Cognitively Normal (CN)</strong></li>
+            <li><strong>Mild Cognitive Impairment (MCI)</strong></li>
+            <li><strong>Alzheimer&rsquo;s disease (AD). </strong></li>
+            </ul>
+            <p>From the set of data points for each patient, per disease category, a feature selection models such as Support Vector Machine (SVM) or cross validation techniques, will be used to extract a subset of important data points for each category, CN and AD. Once the subset of features is selected, a model will then be trained to classify patients into classes.</p>
+            <p>Particularly, we will be training a deep neural network (DNN), on the subset of features extracted, on patients that are cognitively normal or have Alzheimer&rsquo;s disease. Once a model has been trained we will test the models classification accuracy with unlabeled mild cognitive impaired patient information. Training the DNN model on CN and AD patients was performed due to the fact that MCI patients may belong to other classifications of dementia that may not necessarily be due to AD.</p>
+            <p>Currently, diagnosing Alzheimer&rsquo;s is typically done by ruling out other diseases or types of dementia first, there is no definite method to diagnose the disease until after death when the brain could be further analyzed. Due to the nature of how alzheimer&rsquo;s disease is diagnosed, classifying MCI patients as AD subject is not trivial. Therefore, by training a model with CN and AD patients, the deep neural network will be able to have a better classification accuracy on the conversion of patients from MCI to AD.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -38,7 +75,60 @@
       <div class="row">
         <div class="col-lg-12 mx-auto">
           <h2>Data Used</h2>
-          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut optio velit inventore, expedita quo laboriosam possimus ea consequatur vitae, doloribus consequuntur ex. Nemo assumenda laborum vel, labore ut velit dignissimos.</p>
+          <div class="col-lg-10">
+            <p>ADNI provides a massive list of relevant biomarkers, for each individual, believed to have some potential influence on AD classification.</p>
+            <div class="row mx-auto">
+              <img class="mx-auto w3-margin" src="{{ url_for('static', filename='img/brain/ADNI_LONI.png') }}" alt="PET progression" height="auto" width="85%">
+            </div>
+            <p>Two main categories of biomarkers include:</p>
+            <ul>
+              <li><strong>Amyloid-Beta Protein</strong></li>
+            </ul>
+            <p style="padding-left: 60px;">Amyloid beta proteins group together in clumps, forming plaque and blocking cell-to-cell signaling at synapses when they mis-fold. Beta-amyloid and tau levels can be measured using cerebrospinal fluid (CSF) or positron emission tomography (PET) scan, both of which we have values for in the data-sets, for each patient.</p>
+            <ul>
+              <li><strong>Damage to nerve cells</strong></li>
+            </ul>
+            <p style="padding-left: 60px;">Damaged nerve cells can be measured by quantifying brain metabolism using fluorodeoxyglucose (FDG) PET scan, or brain atrophy using magnetic resonance imaging (MRI), both of which we have values for in the data-sets.</p>
+            <hr>
+            <p>All the biomarkers/features of interest retrieved for analysis are detailed in Table 1 (Below) along with the key of the field belonging to that feature. Below are some of the measurements utilized in this research and the methods used to obtain them:</p>
+            <ul>
+              <li><strong>Magnetic Resonance Imaging (MRI)</strong></li>
+            </ul>
+            <p style="padding-left: 60px;">MRI images were preprocessed by a software called FreeSurfer [4], which is used to measure brain structural integrity and calculate measures of volumes, cortical thicknesses, and surface areas [6].</p>
+            <div class="row" align="center">
+              <div class="col-lg-6 mx-auto">
+                <img class="mx-auto w3-margin" src="{{ url_for('static', filename='img/brain/AD_MRI.png') }}" alt="AD MRI" height="200px" width="auto">
+              </div>
+              <div class="col-lg-6 mx-auto">
+                <img class="mx-auto w3-margin" src="{{ url_for('static', filename='img/brain/mri_atrophy.jpg') }}" alt="MRI atrophy" height="200px" width="auto">
+              </div>
+            </div>
+            <ul>
+              <li><strong>Diffusion Tensor Imaging (DTI)</strong></li>
+            </ul>
+            <p style="padding-left: 60px;">Obtain values regarding the brains white matter tracts, related to cells and axons. DTI is used to estimate the brains mean diffusivity, axial diffusivity, and radial diffusivity.</p>
+            <div class="row mx-auto">
+              <img class="mx-auto w3-margin" src="{{ url_for('static', filename='img/brain/DTI_diagram.png') }}" alt="PET progression" height="200px" width="auto">
+            </div>
+            <ul>
+              <li><strong>FDG-PET</strong></li>
+            </ul>
+            <p style="padding-left: 60px;">Scans are used to obtain average measurements of cell metabolism, AD affected individuals tend to show reduced metabolism.</p>
+            <ul>
+              <li><strong>Neuropsychological Tests</strong></li>
+            </ul>
+            <p style="padding-left: 60px;">Conducted by clinical experts, to assess a variety of skills such as general cognition, language, memory, vision, and many others. The cognition tests are used as an indicator of cognitive decline in AD individuals. If there is no decline in mental health, the next time taking the test, individuals should already remember how to approach it and thus perform better, however the opposite is seen in AD patients as one would expect with dementia.</p>
+            <ul>
+              <li><strong>Genetic Data</strong></li>
+              <li><strong>Demographics</strong></li>
+              <li><strong>Medical Diagnosis</strong></li>
+            </ul>
+            <hr>
+            <p>The results of all tests are included in the data for each patient entry, in the data-sets provided, unless otherwise specified (D2 set doesn&rsquo;t include diagnosis).</p>
+            <div class="row mx-auto">
+              <img class="mx-auto w3-margin" src="{{ url_for('static', filename='img/primary_features.jpg') }}" alt="PET progression" height="auto" width="85%">
+            </div>
+          </div>
         </div>
       </div>
     </div>
