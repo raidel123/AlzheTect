@@ -2,19 +2,6 @@ import os
 import pandas as pd
 import sqlite3
 from sqlite3 import Error
-'''
-# get main project path (in case this file is compiled alone)
-if os.name == 'nt':
-    # Windows
-    context = os.getcwd().split('\\')
-else:
-    # Ubuntu
-    context = os.getcwd().split('/')
-
-context = '/'.join(context[:context.index('AlzheTect') + 1])
-
-# sys.path.append(context + "/trunk/src/utils")
-'''
 
 def OpenConnection(db_file='src/sqldb/alzhetect.db'):
 
@@ -29,7 +16,6 @@ def OpenConnection(db_file='src/sqldb/alzhetect.db'):
         # print(sqlite3.version)
     except Error as e:
         print(e)
-        conn = "Error"
 
     return conn
 
