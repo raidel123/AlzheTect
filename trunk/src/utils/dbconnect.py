@@ -22,16 +22,16 @@ def OpenConnection(db_file='src/sqldb/alzhetect.db'):
 def CloseConnection(conn):
     conn.close()
 
-def AddTableCSV(conn, table_name="patients", csvfile='src/test/TADPOLE_test.csv'):
+def AddTableCSV(conn, table_name="patients", csvfile='src/sqldb/alzhetect.db'):
     df = pd.read_csv(csvfile)
-    df.to_sql(table_name, conn, if_exists='append', index=False)
+    df.to_sql(table_name, conn, if_exists='replace', index=False)
 
 def QueryDB(query, conn):
     return pd.read_sql_query(query, conn)
 
 if __name__ == '__main__':
-    conn = OpenConnection()
-    # AddTableCSV(conn)
+    conn = OpenConnection("../sqldb/alzhetect.db")
+    # AddTableCSV(conn,table_name="patient_dict", csvfile="../../src/tadpole/TADPOLE_D1_D2_Dict.csv")
 
-    print QueryDB("SELECT RID FROM patients", conn)
+    print QueryDB("SELECT name FROM sqlite_master WHERE type='table';", conn)
     CloseConnection(conn)

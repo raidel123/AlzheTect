@@ -125,8 +125,31 @@
             </ul>
             <hr>
             <p>The results of all tests are included in the data for each patient entry, in the data-sets provided, unless otherwise specified (D2 set doesn&rsquo;t include diagnosis).</p>
+            <!--
             <div class="row mx-auto">
               <img class="mx-auto w3-margin" src="{{ url_for('static', filename='img/primary_features.jpg') }}" alt="PET progression" height="auto" width="85%">
+            </div>
+            -->
+            <div class="row col-lg-12">
+              <table id="important_features" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        {% for key in selected_features.th %}
+                        <th>{{key}}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for val in selected_features.td %}
+                    <tr>
+                        <td>{{val[0]}}</td>
+                        <td>{{val[1]}}</td>
+                        <td>{{val[2]}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+
             </div>
           </div>
         </div>

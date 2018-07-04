@@ -23,6 +23,7 @@
       <div class="row">
         <div class="col-lg-11 col-md-11 mx-auto">
           <div class="row w3-card mx-auto w3-margin-top">
+            <!--
             <div class="col-lg-4 col-md-4 col-sm-12 mx-auto">
 
               {% for i in range(0, (checkboxes|length/2)|int) %}
@@ -48,10 +49,56 @@
               {% endfor %}
 
             </div>
+          -->
+
+            <table id="select_visual" class="display" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>Select</th>
+                  <th>Field_Name</th>
+                  <th>Measurement_Type</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for check in checkboxes %}
+                <tr>
+                  <td><input value="{{check.value}}" class="w3-check" type="checkbox" onclick='box_checked(this, {{check|tojson}})'></td>
+                  <td>{{check.value}}</td>
+                  <td>{{check.label}}</td>
+                  <td>{{check.description}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
           </div>
         </div>
       </div>
-
+      <!--
+      <div class="row col-lg-11 col-md-11 w3-card-4 mx-auto margin-top64" style="padding:20px;">
+        <table id="important_features" class="display" style="width:100%;">
+          <thead>
+              <tr>
+                  <th>Select</th>
+                  {% for key in selected_features.th %}
+                  <th>{{key}}</th>
+                  {% endfor %}
+              </tr>
+          </thead>
+          <tbody>
+              {% for val in selected_features.td %}
+              <tr>
+                  <td><input type="checkbox"></input></td>
+                  <td>{{val[0]}}</td>
+                  <td>{{val[1]}}</td>
+                  <td>{{val[2]}}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      -->
     </div>
   </section>
 

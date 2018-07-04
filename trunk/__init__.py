@@ -2,6 +2,8 @@ from flask import Flask, render_template
 
 import glob, os, sys
 import pandas as pd
+import numpy as np
+import math
 
 app = Flask(__name__)
 appContext = os.path.abspath(os.path.dirname(__file__))
@@ -30,13 +32,102 @@ import dbconnect as db
 def HomePage():
     title="Alzhetect"
 
-    return render_template("index.html", title=title)
+    conn = db.OpenConnection(appContext + '/src/sqldb/alzhetect.db')
+
+    query_features = db.QueryDB("SELECT * FROM selected_features;", conn)
+    selected_features = {"th" : query_features.keys(),
+                         "td" : query_features.values.tolist()}
+
+    # print "keys", query_features.keys()
+    # print "values", query_features.values.tolist()
+
+    db.CloseConnection(conn)
+
+    return render_template("index.html", title=title, selected_features=selected_features)
 
 @app.route('/stats/', methods=['GET', 'POST'])
 def StatsPage():
 
     conn = db.OpenConnection(appContext + '/src/sqldb/alzhetect.db')
 
+    query_features = db.QueryDB("SELECT * FROM selected_features;", conn)
+
+    checkboxes = GenerateCheckbox(conn, query_features)
+
+    selected_features = {"th" : query_features.keys(),
+                         "td" : query_features.values.tolist()}
+
+    db.CloseConnection(conn)
+    return render_template("stats.html", checkboxes=checkboxes, selected_features=selected_features)
+
+@app.route('/alzhetect/', methods=['GET', 'POST'])
+def AlzhetectPage():
+    return render_template("alzhetect.html")
+
+@app.route('/contact/', methods=['GET', 'POST'])
+def ContactPage():
+    return render_template("contact.html")
+
+# ----------------------------------------------------------------------------
+def GenerateCheckbox(conn, query_features):
+    append_table = StaticCheckboxes(conn)
+    for index, row in query_features.iterrows():
+        field = row['Field_Name']
+        field_data_stats = SimpleQuery(field, conn)
+        # field_data_stats = field_data_stats[~np.isnan(field_data_stats)]
+        final_data = []
+        unknown = 0
+        # print field_data_stats.describe().to_dict()
+
+        for nrow in field_data_stats.values.tolist():
+            try:
+                data_val = float(nrow[0])
+            except (ValueError, TypeError) as e:
+                data_val = None
+
+            if data_val == ' ' or data_val is None or math.isnan(data_val):
+                unknown += 1
+            else:
+                final_data.append(data_val)
+
+        final_data.sort()
+        fd_mean = np.mean(final_data)
+        print "mean:", fd_mean
+
+        if len(final_data) == 0:
+            continue
+        stats = []
+        chunk = len(final_data)/4
+        bottom_indx = 0
+        top_ind = chunk
+
+        slice1 = final_data[bottom_indx:top_ind+1]
+        stats.append(["X < " + str(slice1[-1]), len(slice1)-1])
+
+        bottom_indx = top_ind
+        top_ind += chunk
+        slice1 = final_data[bottom_indx:top_ind+1]
+        stats.append([str(slice1[0]) + " <= X < " + str(slice1[-1]), len(slice1)-1])
+
+        bottom_indx = top_ind
+        top_ind += chunk
+        slice1 = final_data[bottom_indx:top_ind+1]
+        stats.append([str(slice1[0]) + " <= X < " + str(slice1[-1]), len(slice1)-1])
+
+        bottom_indx = top_ind
+        slice1 = final_data[bottom_indx:]
+        stats.append(["X >= " + str(slice1[0]), len(slice1)])
+
+        stats.append(['Unknown', unknown])
+
+        append_table.append({"value":row['Field_Name'], "label":row['Measurement_Type'], "stats":stats, "description":row['Description']})
+
+    return append_table
+
+def SimpleQuery(field, conn):
+    return db.QueryDB("SELECT " + field + " FROM patients;",conn)
+
+def StaticCheckboxes(conn):
     genderStats = [["Male", db.QueryDB("SELECT COUNT(PTGENDER) FROM patients WHERE PTGENDER='Male';", conn).iloc[0]['COUNT(PTGENDER)']],
                  ["Female", db.QueryDB("SELECT COUNT(PTGENDER) FROM patients WHERE PTGENDER='Female';", conn).iloc[0]['COUNT(PTGENDER)']]]
 
@@ -70,27 +161,15 @@ def StatsPage():
                 ["Never married", db.QueryDB("SELECT COUNT(PTMARRY) FROM patients WHERE PTMARRY='Never married';", conn).iloc[0]['COUNT(PTMARRY)']],
                 ["Unknown", db.QueryDB("SELECT COUNT(PTMARRY) FROM patients WHERE PTMARRY='Unknown';", conn).iloc[0]['COUNT(PTMARRY)']]]
 
-    db.CloseConnection(conn)
+    checkboxes = [{"value":"PTGENDER", "label":"Gender", "stats":genderStats, "description":0},
+                  {"value":"AGE", "label":"Age", "stats":ageStats, "description":0},
+                  {"value":"PTRACCAT", "label":"Race", "stats":raceStats, "description":0},
+                  {"value":"PTETHCAT", "label":"Ethnicity", "stats":ethStats, "description":0},
+                  {"value":"PTEDUCAT", "label":"Education", "stats":eduStats, "description":0},
+                  {"value":"PTMARRY", "label":"Marital Status", "stats":marryStats, "description":0},
+                  ]
 
-    # connect to DB
-    checkboxes = [{"value":"PTGENDER", "label":"Gender", "stats":genderStats},
-                  {"value":"AGE", "label":"Age", "stats":ageStats},
-                  {"value":"PTRACCAT", "label":"Race", "stats":raceStats},
-                  {"value":"PTETHCAT", "label":"Ethnicity", "stats":ethStats},
-                  {"value":"PTEDUCAT", "label":"Education", "stats":eduStats},
-                  {"value":"PTMARRY", "label":"Marital Status", "stats":marryStats}]
-
-    return render_template("stats.html", checkboxes=checkboxes)
-
-@app.route('/alzhetect/', methods=['GET', 'POST'])
-def AlzhetectPage():
-    return render_template("alzhetect.html")
-
-@app.route('/contact/', methods=['GET', 'POST'])
-def ContactPage():
-    return render_template("contact.html")
-
-# ----------------------------------------------------------------------------
+    return checkboxes
 
 if __name__ == "__main__":
     app.run()

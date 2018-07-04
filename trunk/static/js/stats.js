@@ -52,12 +52,12 @@ function box_checked(self, checkbox)
 {
   if (self.checked){
       // alert('checked');
-      $.chartjq(checkbox.label);
+      $.chartjq(checkbox.value);
   }else {
       alert('unchecked')
   }
 
-  addChart(checkbox.label, checkbox.value, checkbox.stats);
+  addChart(checkbox.value, checkbox.label, checkbox.stats);
 
   /*
   if (document.getElementById('xxx').checked)

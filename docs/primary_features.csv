@@ -1,0 +1,55 @@
+﻿Field_Name,Measurement_Type,Description
+MMSE,Cognitive Test,
+MMSE_bl,Cognitive Test,
+ADAS11,Cognitive Test,
+ADAS13,Cognitive Test,
+CDRSB,Cognitive Test,
+RAVLT_immediate,Cognitive Test,
+Hippocampus,MRI measures,
+WholeBrain,MRI measures,
+Entorhinal,MRI measures,
+MidTemp,MRI measures,
+FDG,PET measures,
+AV45,PET measures,
+ABETA_UPENNBIOMK9_04_19_17,Cerebral-spinal fluid,amyloid-beta
+TAU_UPENNBIOMK9_04_19_17,Cerebral-spinal fluid,tau level
+PTAU_UPENNBIOMK9_04_19_17,Cerebral-spinal fluid,phosphorylated tau level
+APOE4,Risk factor,
+AGE,Risk factor,
+PTGENDER,Risk factor,
+ST83TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Entorhinal Thickness (R),Average
+ST83TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Entorhinal Thickness (R),Standard Deviation
+ST83CV_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Entorhinal Volume (R),
+ST24TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Entorhinal Thickness (L),Average
+ST24TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Entorhinal Thickness (L),Standard Deviation
+ST24CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Entorhinal Volume (L),
+ST113CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Rostral anterior cingulate volume,
+ST54CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Rostral anterior cingulate volume,
+ST39TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Medial orbito-frontal thickness (L),Average
+ST39TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Medial orbito-frontal thickness (L),Standard Deviation
+ST39SA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Medial orbito-frontal area (L),
+ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Hippocampus (R),Volume
+RIGHT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16,Hippocampus (R),
+RIGHT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16,Hippocampus (R),
+RIGHT_HIPPOCAMPUS_UCBERKELEYAV1451_10_17_16,Hippocampus (R),
+ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Hippocampus (L),Volume
+LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16,Hippocampus (L),
+LEFT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16,Hippocampus (L),
+ST89SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Inferior Lateral Ventricle (R),Volume
+ST30SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Inferior Lateral Ventricle (L),Volume
+ST130TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16 ,Insula thickness (L),Average
+ST130TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Insula thickness (L),Standard Deviation
+ST82TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Cuneus Thickness (R),Average
+ST82TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Cuneus Thickness (R),Standard Deviation
+ST12SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Amygdala (L),Volume
+LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16,Amygdala (L),
+LEFT_AMYGDALA_SIZE_UCBERKELEYAV45_10_17_16,Amygdala (L),
+ST40TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Middle temporal thickness (L),Average
+ST40TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Middle temporal thickness (L),Standard Deviation
+ST117SA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Superior temporal area (R),
+ST109TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Posterior cingulate thickness ( R ),Average
+ST109TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Posterior cingulate thickness ( R ),Standard Deviation
+ST109TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Posterior cingulate thickness (L),Average
+ST109TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Posterior cingulate thickness (L),Standard Deviation
+ST110TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Pre-central thickness (R),Average
+ST110TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Pre-central thickness (R),Standard Deviation
