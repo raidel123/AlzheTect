@@ -13,9 +13,10 @@ $(document).ready(function() {
     "responsive": true
   });
 
-
+  /*
     $('#important_features tbody').on('click', 'tr', function () {
         var data = table.row( this ).data();
-        alert( 'You clicked on '+data[1]+'\'s row' );
+        alert( 'You clicked on row' + data);
     } );
+    */
 } );

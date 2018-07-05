@@ -43,10 +43,14 @@ Highcharts.chart('container', {
 
 $.chartjq = function(id){
   //alert(id);
-	var newDiv = $('<div class="w3-card-4 col-lg-5 col-md-5 col-sm-12 mx-auto margin-top64"><div id="' + id + '" style="height: 400px"></div></div>');
+	var newDiv = $('<div id="' + id + '" style="height: 400px" class="w3-card-4 col-lg-5 col-md-5 col-sm-12 mx-auto margin-top64"></div>');
   //newDiv.style.background = "#000";
   $('#visualsboard').append(newDiv);
 };
+
+function changeGraph(self){
+	alert(self.value);
+}
 
 function box_checked(self, checkbox)
 {
@@ -54,7 +58,9 @@ function box_checked(self, checkbox)
       // alert('checked');
       $.chartjq(checkbox.value);
   }else {
-      alert('unchecked')
+		var parent = document.getElementById("visualsboard");
+		var child = document.getElementById(checkbox.value);
+		parent.removeChild(child);
   }
 
   addChart(checkbox.value, checkbox.label, checkbox.stats);

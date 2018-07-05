@@ -23,34 +23,6 @@
       <div class="row">
         <div class="col-lg-11 col-md-11 mx-auto">
           <div class="row w3-card mx-auto w3-margin-top">
-            <!--
-            <div class="col-lg-4 col-md-4 col-sm-12 mx-auto">
-
-              {% for i in range(0, (checkboxes|length/2)|int) %}
-
-              <p>
-                <input id="{{checkboxes[i].value}}" value="{{checkboxes[i].value}}" class="w3-check" type="checkbox" onclick='box_checked(this, {{checkboxes[i]|tojson}})'>
-                <label>{{checkboxes[i].label}}</label>
-              </p>
-
-              {% endfor %}
-
-            </div>
-
-            <div class="col-lg-4 col-md-4 col-sm-12 mx-auto" >
-
-              {% for i in range((checkboxes|length/2)|int, checkboxes|length) %}
-
-              <p>
-                <input id="{{checkboxes[i].value}}" value="{{checkboxes[i].value}}" class="w3-check" type="checkbox" onclick='box_checked(this, {{checkboxes[i]|tojson}})'>
-                <label>{{checkboxes[i].label}}</label>
-              </p>
-
-              {% endfor %}
-
-            </div>
-          -->
-
             <table id="select_visual" class="display" style="width:100%;">
               <thead>
                 <tr>
@@ -72,33 +44,18 @@
               </tbody>
             </table>
 
+            <div class="row col-lg-8 mx-auto w3-margin-top">
+              <label class="radio-inline mx-auto">
+                <input id="pie_chart" value="pie" class="w3-margin" type="radio" name="chart_type" checked="checked" onchange="changeGraph(this)">Pie Chart
+              </label>
+              <label class="radio-inline mx-auto">
+                <input id="bar_chart" value="bar" class="w3-margin" type="radio" name="chart_type" onchange="changeGraph(this)">Bar Graph
+              </label>
+            </div>
+
           </div>
         </div>
       </div>
-      <!--
-      <div class="row col-lg-11 col-md-11 w3-card-4 mx-auto margin-top64" style="padding:20px;">
-        <table id="important_features" class="display" style="width:100%;">
-          <thead>
-              <tr>
-                  <th>Select</th>
-                  {% for key in selected_features.th %}
-                  <th>{{key}}</th>
-                  {% endfor %}
-              </tr>
-          </thead>
-          <tbody>
-              {% for val in selected_features.td %}
-              <tr>
-                  <td><input type="checkbox"></input></td>
-                  <td>{{val[0]}}</td>
-                  <td>{{val[1]}}</td>
-                  <td>{{val[2]}}</td>
-              </tr>
-              {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      -->
     </div>
   </section>
 
@@ -114,6 +71,7 @@
     </div>
   </section>
 
+  <!--
   <section id="data">
     <div class="container">
       <div class="row">
@@ -124,5 +82,6 @@
       </div>
     </div>
   </section>
+  -->
 
 {% endblock %}
