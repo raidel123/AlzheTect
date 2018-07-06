@@ -5,6 +5,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import pickle
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -30,15 +31,14 @@ import splitdata as sd
 import dnnutils as dnnu
 import plotresults as pr
 
-def svm_train(src=r"../train/TADPOLE_train.csv"):
+def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn/knnmodel2.pickle'):
     model_data = GetModelDataCSV(src)
-    predict_data = GetModelDataCSV(r"../test/TADPOLE_test.csv")
-    predict_data = np.array(predict_data.drop(['DX_bl'], 1))
-    lb = LabelBinarizer()
+    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    tdata = TransformData(split_classes)
 
-    X = np.array(model_data.drop(['DX_bl'], 1))
-    Y = np.array(model_data['DX_bl'])
-    Y = lb.fit_transform(Y)
+    X = np.array(tdata.drop(['DX_bl'], 1))
+    Y = np.array(tdata['DX_bl'])
+    Y = np.array([Resulbinarizer(label) for label in Y])
 
     X = preprocessing.scale(X)
 
@@ -46,34 +46,64 @@ def svm_train(src=r"../train/TADPOLE_train.csv"):
     print (len(X), len(Y))
 
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
-    # X_pred, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
 
-    clf = neighbors.KNeighborsClassifier()    # n_jobs=-1)
+    clf = neighbors.KNeighborsClassifier(n_jobs=-1)
     # clf = svm.SVR()
     clf.fit(X_train, Y_train)
 
-    test_accuracy = clf.score(X_test, Y_test)
-    test_accuracy2 = clf.predict(X_test)
-    test_accuracy2 = [ResulUnbinarizer(a) for a in test_accuracy2]
-    predict_accuracy = clf.predict(predict_data)
-    print test_accuracy
-    # print "**Predict Accuracy**", predict_accuracy
+    with open(model_loc, 'wb') as f:
+        pickle.dump(clf, f)
 
-    print "len X", test_accuracy2
-    print "len Y", Y_test.shape
+    test_score = clf.score(X_test, Y_test)
+    test_predict = clf.predict(X_test)
 
-    print len(X_test[0])
-    print X_test[:,0]
+    print "test score:", test_score
+    print "**test predict**", test_predict
 
     # Plot outputs
-    plt.scatter(X_test[:,0], Y_test,  color='black')
-    plt.plot(predict_data, predict_accuracy, color='blue', linewidth=3)
+    # plt.scatter(X_test[:,0], Y_test,  color='black')
+    # plt.plot(X_test, test_predict, color='blue', linewidth=3)
 
-    plt.xticks(())
-    plt.yticks(())
+    # plt.xticks(())
+    # plt.yticks(())
 
-    plt.savefig('foo.png')
+    # plt.savefig('foo.png')
 
+    knn_predict()
+
+def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle'):
+
+    trained_classifier = open(model_loc ,'rb')
+    clf = pickle.load(trained_classifier)
+
+    predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
+    # return model_dp
+
+    predict_csv = sd.SplitClassData(indata=predict_csv, file=False)
+    split_classes = TransformData(predict_csv)
+
+    predict_data = np.array(split_classes.drop(['DX_bl'], 1))
+
+    predict_data = preprocessing.scale(predict_data)
+
+    prediction = clf.predict(predict_data)
+    print "**Predict Accuracy**", prediction
+
+    results = predict_csv[['RID', 'DX_bl']].copy()
+    results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+
+    print results
+
+    results.to_csv(context + r"/trunk/results/knnresults.csv",index=False)
+
+    # Plot outputs
+    # plt.scatter(X_test[:,0], Y_test,  color='black')
+    # plt.plot(X_test, test_accuracy2, color='blue', linewidth=3)
+
+    # plt.xticks(())
+    # plt.yticks(())
+
+    # plt.savefig('foo2.png')
 
 def TransformData(data):
     # TODO: remove print
@@ -93,8 +123,18 @@ def TransformData(data):
 def ResulUnbinarizer(val):
     if val == 0:
         return "AD"
-    else:
+    elif val == 1:
         return "CN"
+    else:
+        return "MCI"
+
+def Resulbinarizer(val):
+    if val == 'AD':
+        return 0
+    elif val == 'CN':
+        return 1
+    else:
+        return 2
 
 # if any of the fields in the top line are changed in the list below
 # change the value within nan_padding() function for the relevant fields
@@ -146,9 +186,25 @@ def GetModelDataCSV(indata):
 
     model_dp = file_dp[GetRelevantFields()]
 
-    # return model_dp
-    split_classes = sd.SplitClassData(indata=model_dp, file=False)
-    return TransformData(split_classes)
+    return model_dp
+
+def SplitClassData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv", file=True):
+
+    if file:
+        tadpole_dp = pd.read_csv(indata, low_memory=False)
+    else:
+        tadpole_dp = indata
+
+    cn_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "CN"]
+    ad_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "AD"]
+    mci_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "MCI"]
+    # print mci_data.head()
+    c_data = pd.concat([ad_data,cn_data, mci_data])
+    # c_data = pd.concat([ad_data,cn_data])
+
+    print ('Total data shape:', tadpole_dp.shape)
+    return c_data
+    # return tadpole_dp
 
 def GetClass(data):
     fields = []
@@ -182,4 +238,5 @@ def get_valid_test_data(data, fraction=(1 - 0.8)):
 
 
 if __name__ == "__main__":
-    svm_train()
+    knn_train()
+    knn_predict()

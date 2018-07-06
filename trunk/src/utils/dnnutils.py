@@ -91,7 +91,7 @@ def TestModel(test):
     model = dnnu.build_neural_network(data_x=test)
     restorer = tf.train.Saver()
     with tf.Session() as sess:
-        restorer.restore(sess,context + r"/trunk/src/trained_model/alzheimer_detect.ckpt")
+        restorer.restore(sess,context + r"/trunk/src/trained_model/dnn/alzheimer_detect.ckpt")
         feed={
             model.inputs:test,
             model.is_training:False
@@ -112,7 +112,7 @@ def TestModel(test):
     evaluation["Prediction"] = [ ResulUnbinarizer(val) for val in test_predict_result ]
     # print evaluation[:10]
 
-    evaluation.to_csv(context + r"/trunk/results/results.csv",index=False)
+    evaluation.to_csv(context + r"/trunk/results/dnnresults.csv",index=False)
 
 def TrainModel(train):
 
@@ -183,7 +183,7 @@ def TrainModel(train):
                           "Validation Acc: {:.4f}".format(val_acc))
 
 
-        saver.save(sess, context + r"/trunk/src/trained_model/alzheimer_detect.ckpt")
+        saver.save(sess, context + r"/trunk/src/trained_model/dnn/alzheimer_detect.ckpt")
 
     plt.plot(x_collect, train_loss_collect, "r--")
     plt.plot(x_collect, valid_loss_collect, "g^")
