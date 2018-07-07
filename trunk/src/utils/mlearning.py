@@ -31,6 +31,8 @@ import splitdata as sd
 import dnnutils as dnnu
 import plotresults as pr
 
+# ------------------------ K-Nearest Neighbors Classifier ---------------------------
+
 def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn/knnmodel2.pickle'):
     model_data = GetModelDataCSV(src)
     split_classes = sd.SplitClassData(indata=model_data, file=False)
@@ -88,9 +90,13 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle'):
 
     prediction = clf.predict(predict_data)
     print "**Predict Accuracy**", prediction
+    probability = clf.predict_proba(predict_data)
+    print "**probability**", probability
+
 
     results = predict_csv[['RID', 'DX_bl']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
     print results
 
@@ -104,6 +110,86 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle'):
     # plt.yticks(())
 
     # plt.savefig('foo2.png')
+
+# ------------------------ SVM Classifier ---------------------------
+
+def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm/svmmodel2.pickle'):
+    model_data = GetModelDataCSV(src)
+    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    tdata = TransformData(split_classes)
+
+    X = np.array(tdata.drop(['DX_bl'], 1))
+    Y = np.array(tdata['DX_bl'])
+    Y = np.array([Resulbinarizer(label) for label in Y])
+
+    X = preprocessing.scale(X)
+
+    print X, Y
+    print (len(X), len(Y))
+
+    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
+
+    clf = svm.SVC(probability=True)
+    clf.fit(X_train, Y_train)
+
+    with open(model_loc, 'wb') as f:
+        pickle.dump(clf, f)
+
+    test_score = clf.score(X_test, Y_test)
+    test_predict = clf.predict(X_test)
+
+    print "test score:", test_score
+    print "**test predict**", test_predict
+
+    # Plot outputs
+    # plt.scatter(X_test[:,0], Y_test,  color='black')
+    # plt.plot(X_test, test_predict, color='blue', linewidth=3)
+
+    # plt.xticks(())
+    # plt.yticks(())
+
+    # plt.savefig('foo.png')
+
+    svm_predict()
+
+def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle'):
+
+    trained_classifier = open(model_loc ,'rb')
+    clf = pickle.load(trained_classifier)
+
+    predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
+    # return model_dp
+
+    predict_csv = sd.SplitClassData(indata=predict_csv, file=False)
+    split_classes = TransformData(predict_csv)
+
+    predict_data = np.array(split_classes.drop(['DX_bl'], 1))
+
+    predict_data = preprocessing.scale(predict_data)
+
+    prediction = clf.predict(predict_data)
+    probability = clf.predict_proba(predict_data)
+    print "**Prediction**", prediction
+    print "**probability**", probability
+
+    results = predict_csv[['RID', 'DX_bl']].copy()
+    results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
+
+    print results
+
+    results.to_csv(context + r"/trunk/results/svmresults.csv",index=False)
+
+    # Plot outputs
+    # plt.scatter(X_test[:,0], Y_test,  color='black')
+    # plt.plot(X_test, test_accuracy2, color='blue', linewidth=3)
+
+    # plt.xticks(())
+    # plt.yticks(())
+
+    # plt.savefig('foo2.png')
+
+# ------------------------ Helper Functions ---------------------------
 
 def TransformData(data):
     # TODO: remove print
@@ -206,37 +292,9 @@ def SplitClassData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv", file=Tru
     return c_data
     # return tadpole_dp
 
-def GetClass(data):
-    fields = []
-    for val in data:
-        if val == "AD":
-            fields.append(np.array([np.int64(0)]))
-        elif val == 'CN':
-            fields.append(np.array([np.int64(1)]))
-        else:
-            fields.append(np.array([np.int64(2)]))
-
-    fields = np.array(fields)
-    return fields
-
-def get_valid_test_data(data, fraction=(1 - 0.8)):
-    data_y = data["DX_bl"]
-    lb = LabelBinarizer()
-    data_y = lb.fit_transform(data_y)
-    #data_y = GetClass(data_y)
-    print 'type:', type(data_y), data_y
-    print 'innertype:', type(data_y[0]), data_y[0]
-    print 'innerinnertype:', type(data_y[0][0]), data_y[0][0]
-    # print 'type', type(data_y)
-
-    data_x = data.drop(["DX_bl"], axis=1)
-
-    train_x, valid_x, train_y, valid_y = train_test_split(data_x, data_y, test_size=fraction)
-
-    return train_x.values, train_y, valid_x, valid_y
-
-
-
 if __name__ == "__main__":
     knn_train()
     knn_predict()
+
+    svm_train()
+    svm_predict()
