@@ -1,0 +1,21 @@
+Field_Name,Measurement_Type,Description
+MMSE_bl,Cognitive Test,
+CDRSB,Cognitive Test,
+ADAS13,Cognitive Test,
+ADAS11,Cognitive Test,
+APOE4,Risk factor,
+RAVLT_immediate,Cognitive Test,
+AV45,PET measures,
+LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16,Amygdala (L),
+Hippocampus,MRI measures,
+WholeBrain,MRI measures,
+ST83CV_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Entorhinal Volume (R),
+ST30SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Inferior Lateral Ventricle (L),Volume
+ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Hippocampus (R),Volume
+ST82TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Cuneus Thickness (R),Average
+ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16,Hippocampus (L),Volume
+LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16,Hippocampus (L),
+ST109TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Posterior cingulate thickness (L),Average
+ST39TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Medial orbito-frontal thickness (L),Average
+ST82TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16,Cuneus Thickness (R),Standard Deviation
+MMSE,Cognitive Test,

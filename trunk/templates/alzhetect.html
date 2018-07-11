@@ -5,7 +5,7 @@
   <div class="container under-nav">
     <div class="row">
       <ul class="tab-buttons centered-pills">
-        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background big-button" onclick="window.location='#fillform'">Fill Form</button></li>
+        <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background big-button" onclick="window.location='#classifier'">Classifier</button></li>
         <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background big-button" onclick="window.location='#uploadcsv'">Upload CSV</button></li>
         <li class="tab-buttons-li"><button class="w3-button w3-round-large color2-background big-button" onclick="window.location='#results'">Results</button></li>
       </ul>
@@ -31,19 +31,51 @@
     </div>
   </section>
 
-  <section id="fillform">
+  <section id="classifier">
     <div class="container">
       <div class="row">
         <div class="col-lg-12 mx-auto">
-          <h2>Fill Form</h2>
-          <p class="lead">This is a great place to talk about your webpage. This template is purposefully unstyled so you can use it as a boilerplate or starting point for you own landing page designs! This template features:</p>
-          <ul>
-            <li>Clickable nav links that smooth scroll to page sections</li>
-            <li>Responsive behavior when clicking nav links perfect for a one page website</li>
-            <li>Bootstrap's scrollspy feature which highlights which section of the page you're on in the navbar</li>
-            <li>Minimal custom CSS so you are free to explore your own unique design options</li>
-          </ul>
+          <h2>Zhetect (Classifier)</h2>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-11 col-md-11">
+          <div class="w3-card w3-margin-top">
+            <div class="w3-container">
+              <h4>Input Patient Information</h2>
+            </div>
+
+            <form class="w3-container">
+              <div class="row">
+                <div class="col-lg-4 col-md-4">
+                  <p>
+                  <label>First Name</label>
+                  <input class="w3-input" type="text"></p>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <p>
+                  <label>Last Name</label>
+                  <input class="w3-input" type="text"></p>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                  <p>
+                  <label>Email</label>
+                  <input class="w3-input" type="text"></p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <form action = "/uploader/" method = "POST"enctype = "multipart/form-data">
+         <input type = "file" name = "file" />
+         <input type = "submit"/>
+       </form>
+      </div>
+      <div class="row">
+        <!-- Uploaded file in different location than HTML file -->
+        <a href="{{ url_for('static', filename='knnresults.csv') }}" download>DownLoadddd</a>
       </div>
     </div>
   </section>

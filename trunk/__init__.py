@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from werkzeug import secure_filename
 
 import glob, os, sys
 import pandas as pd
@@ -62,11 +63,44 @@ def StatsPage():
 
 @app.route('/alzhetect/', methods=['GET', 'POST'])
 def AlzhetectPage():
+
+    def GetSetRelevantFields():
+        return  [
+                'RID','DX_bl','DX','EXAMDATE',
+                'MMSE_bl',
+                'CDRSB',
+                'ADAS13',
+                'ADAS11',
+                'RAVLT_immediate',
+                'MMSE',
+                'APOE4',
+                'LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16',
+                'ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
+                'ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
+                'Hippocampus',
+                'ST82TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+                'ST39TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+                'ST82TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+                'ST83CV_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+                'ST30SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
+                'ST109TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+                'AV45',
+                'WholeBrain',
+                'LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16',
+                ]
+
     return render_template("alzhetect.html")
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def ContactPage():
     return render_template("contact.html")
+
+@app.route('/uploader/', methods = ['GET', 'POST'])
+def upload_file():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename(f.filename))
+      return 'file uploaded successfully'
 
 # ----------------------------------------------------------------------------
 def GenerateCheckbox(conn, query_features):
