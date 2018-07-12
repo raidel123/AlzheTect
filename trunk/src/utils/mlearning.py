@@ -1,6 +1,6 @@
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+# import matplotlib
+# matplotlib.use('Agg')
+# import matplotlib.pyplot as plt
 import sys
 import os
 import pandas as pd
@@ -25,7 +25,7 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import MeanShift
 from sklearn.datasets.samples_generator import make_blobs
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import style
+# from matplotlib import style
 style.use("ggplot")
 
 from keras.models import Sequential
@@ -260,6 +260,7 @@ def kmeans_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/
     labels = clf.labels_
     cluster_centers = clf.cluster_centers_
 
+    '''
     colors = 10*['r','g','b','c','k','y','m']
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -288,6 +289,7 @@ def kmeans_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/
     # plt.savefig('foo.png')
 
     # svm_predict()
+    '''
 
 def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
     trained_classifier = open(model_loc ,'rb')
