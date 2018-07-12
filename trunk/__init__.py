@@ -5,6 +5,7 @@ import glob, os, sys
 import pandas as pd
 import numpy as np
 import math
+import io
 
 app = Flask(__name__)
 appContext = os.path.abspath(os.path.dirname(__file__))
@@ -27,7 +28,7 @@ import dbconnect as db
 sys.path.append(appContext + "/src/utils")
 
 import dbconnect as db
-# import mlearning as ml
+import mlearning as ml
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/', methods=['GET', 'POST'])
@@ -114,8 +115,16 @@ def ContactPage():
 def upload_file():
    if request.method == 'POST':
       f = request.files['file']
-      f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
-      ml.knn_predict(model_loc="src/trained_model/knn/knnmodel2.pickle", input_data="results/uploads/upload.csv", output_file="static/results.csv")
+      in_file = f.read()
+      # print type(in_file)
+      # print pd.DataFrame([sub.split(",")]f.read())
+      # f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
+      # redict_csv = ml.GetModelDataCSV(io.StringIO(unicode(in_file)))
+      # print predict_csv
+      # return model_dp
+      # print io.StringIO(unicode(in_file)).getvalue()
+
+      ml.knn_predict(model_loc="src/trained_model/knn/knnmodel2.pickle", input_data=io.StringIO(unicode(in_file)), output_file="static/results.csv")
 
       return 'file uploaded successfully'
 
@@ -153,8 +162,6 @@ def GenerateCheckbox(conn, query_features):
         final_data.sort()
         fd_mean = np.mean(final_data)
         fd_std = np.std(final_data)
-        # print "mean:", fd_mean
-        # print "std:", fd_std
 
         stats = []
         # chunk = len(final_data)/4
