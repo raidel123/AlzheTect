@@ -115,7 +115,7 @@ def upload_file():
    if request.method == 'POST':
       f = request.files['file']
       f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
-      # ml.knn_predict(model_loc="src/trained_model/knn/knnmodel2.pickle", input_data="results/uploads/upload.csv", output_file="static/results.csv")
+      ml.knn_predict(model_loc="src/trained_model/knn/knnmodel2.pickle", input_data="results/uploads/upload.csv", output_file="static/results.csv")
 
       return 'file uploaded successfully'
 
