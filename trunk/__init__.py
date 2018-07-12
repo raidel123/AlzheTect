@@ -124,7 +124,7 @@ def upload_file():
       # return model_dp
       # print io.StringIO(unicode(in_file)).getvalue()
 
-      ml.knn_predict(model_loc="src/trained_model/knn/knnmodel2.pickle", input_data=io.StringIO(unicode(in_file)), output_file="static/results.csv")
+      ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=io.StringIO(unicode(in_file)), output_file=appContext+"/static/results.csv")
 
       return 'file uploaded successfully'
 
