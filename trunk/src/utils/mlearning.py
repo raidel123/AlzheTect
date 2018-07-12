@@ -26,7 +26,7 @@ from sklearn.cluster import MeanShift
 from sklearn.datasets.samples_generator import make_blobs
 from mpl_toolkits.mplot3d import Axes3D
 # from matplotlib import style
-style.use("ggplot")
+# style.use("ggplot")
 
 from keras.models import Sequential
 from keras.layers import Dense
