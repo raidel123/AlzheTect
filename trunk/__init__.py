@@ -128,7 +128,7 @@ def upload_file():
 
       results = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=io.StringIO(unicode(in_file)), output_file=appContext+"/static/results.csv")
 
-      return render_template("contact.html", results=results)
+      return render_template("contact.html", results=results.values.tolist())
 
 @app.route('/fieldloader/', methods = ['GET', 'POST'])
 def upload_fields():
