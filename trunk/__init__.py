@@ -103,9 +103,11 @@ def AlzhetectPage():
                 ]
     '''
 
+    results = [0]
+
     db.CloseConnection(conn)
 
-    return render_template("alzhetect.html", patient_input_fields=patient_input_fields)
+    return render_template("alzhetect.html", patient_input_fields=patient_input_fields, results=results)
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def ContactPage():
@@ -124,9 +126,9 @@ def upload_file():
       # return model_dp
       # print io.StringIO(unicode(in_file)).getvalue()
 
-      ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=io.StringIO(unicode(in_file)), output_file=appContext+"/static/results.csv")
+      results = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=io.StringIO(unicode(in_file)), output_file=appContext+"/static/results.csv")
 
-      return 'file uploaded successfully'
+      return render_template("contact.html", results=results)
 
 @app.route('/fieldloader/', methods = ['GET', 'POST'])
 def upload_fields():

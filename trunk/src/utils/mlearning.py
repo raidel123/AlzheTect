@@ -120,18 +120,20 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
     predict_data = preprocessing.scale(predict_data)
 
     prediction = clf.predict(predict_data)
-    print "**Predict Accuracy**", prediction
+    # print "**Predict Accuracy**", prediction
     probability = clf.predict_proba(predict_data)
-    print "**probability**", probability
+    # print "**probability**", probability
 
 
     results = predict_csv[['RID', 'DX_bl']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
-    print results
+    # print results
 
-    results.to_csv(output_file,index=False)
+    # results.to_csv(output_file,index=False)
+
+    return results
 
     # Plot outputs
     # plt.scatter(X_test[:,0], Y_test,  color='black')
