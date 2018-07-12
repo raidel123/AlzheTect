@@ -40,46 +40,53 @@
       </div>
       <div class="row">
         <div class="col-lg-11 col-md-11">
-          <div class="w3-card w3-margin-top">
-            <div class="w3-container">
-              <h4>Input Patient Information</h2>
-            </div>
+          <h5>Input Patient Information</h5>
 
-            <form class="w3-container">
-              <div class="row">
-                <div class="col-lg-4 col-md-4">
-                  <p>
-                  <label>First Name</label>
-                  <input class="w3-input" type="text"></p>
+          <div class="row col-lg-8 mx-auto w3-margin-top">
+            <label class="radio-inline mx-auto">
+              <input id="input_values" value="input_values" class="w3-margin" type="radio" name="input_type" checked="checked" onchange="changeInput(this, 'raw_input')">Input Values
+            </label>
+            <label class="radio-inline mx-auto">
+              <input id="upload_csv" value="upload_csv" class="w3-margin" type="radio" name="input_type" onchange="changeInput(this, 'file_input')">Upload CSV
+            </label>
+          </div>
+
+          <div id="file_input" class="row col-lg-11 col-md-11 margin-top64" style="display:none;">
+            <p>Upload CSV File To Classify:</p>
+            <div class="w3-card w3-margin-top">
+              <form action = "/uploader/" method = "POST" enctype = "multipart/form-data">
+                <input type = "file" name = "file" />
+                <span></span>
+                <input type = "submit"/>
+              </form>
+            </div>
+          </div>
+
+          <div id="raw_input" class="margin-top64 col-lg-11 col-md-11">
+            <p>Manually Input Information Below:<p>
+            <div class='w3-card w3-margin-top'>
+              <form id="raw_form" action="/fieldloader/" method = "POST" class="w3-container">
+                <div class="row">
+                  {% for field in patient_input_fields.field_name %}
+                  <div class="col-lg-6">
+                    <p>
+                      <label id="{{field[0]}}_label" name="{{field[0]}}">{{field[0]}}</label>
+                      <input id="{{field[0]}}_input" name="{{field[0]}}" class="w3-input" type="text">
+                    </p>
+                  </div>
+                  {% endfor %}
+                  <input class="mx-auto" type = "submit"/>
                 </div>
-                <div class="col-lg-4 col-md-4">
-                  <p>
-                  <label>Last Name</label>
-                  <input class="w3-input" type="text"></p>
-                </div>
-                <div class="col-lg-4 col-md-4">
-                  <p>
-                  <label>Email</label>
-                  <input class="w3-input" type="text"></p>
-                </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <form action = "/uploader/" method = "POST"enctype = "multipart/form-data">
-         <input type = "file" name = "file" />
-         <input type = "submit"/>
-       </form>
-      </div>
-      <div class="row">
-        <!-- Uploaded file in different location than HTML file -->
-        <a href="{{ url_for('static', filename='knnresults.csv') }}" download>DownLoadddd</a>
       </div>
     </div>
   </section>
 
+
+  <!--
   <section id="uploadcsv">
     <div class="container">
       <div class="row">
@@ -96,13 +103,17 @@
       </div>
     </div>
   </section>
+  -->
 
   <section id="results" class="bg-light">
     <div class="container">
       <div class="row">
         <div class="col-lg-12 mx-auto">
           <h2>Results</h2>
-          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero odio fugiat voluptatem dolor, provident officiis, id iusto! Obcaecati incidunt, qui nihil beatae magnam et repudiandae ipsa exercitationem, in, quo totam.</p>
+          <div class="row w3-margin-top col-lg-11 mx-auto">
+            <!-- Uploaded file in different location than HTML file -->
+            <a class="mx-auto" href="{{ url_for('static', filename='results.csv') }}" download>DownLoadddd</a>
+          </div>
         </div>
       </div>
     </div>

@@ -34,6 +34,7 @@ from keras.wrappers.scikit_learn import KerasClassifier
 from keras.utils import np_utils
 from keras.models import model_from_yaml
 from keras.models import load_model
+from keras.callbacks import ModelCheckpoint
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
@@ -43,6 +44,7 @@ from sklearn.cross_validation import ShuffleSplit
 from sklearn.metrics import r2_score
 from collections import defaultdict
 
+'''
 # get main project path (in case this file is compiled alone)
 if os.name == 'nt':
     # Windows
@@ -58,12 +60,12 @@ sys.path.append(context + "/trunk/src/utils")
 import splitdata as sd
 import dnnutils as dnnu
 import plotresults as pr
-
+'''
 # ------------------------ K-Nearest Neighbors Classifier ---------------------------
 
 def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn/knnmodel2.pickle'):
     model_data = GetModelDataCSV(src)
-    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
     X = np.array(tdata.drop(['DX_bl'], 1))
@@ -102,15 +104,15 @@ def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn
 
     # knn_predict()
 
-def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle'):
+def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data="../../results/uploads/upload.csv", output_file="../../results/uploads/results.csv", file=True):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
 
-    predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
+    predict_csv = GetModelDataCSV(input_data)
     # return model_dp
 
-    predict_csv = sd.SplitClassData(indata=predict_csv, file=False)
+    predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DX_bl'], 1))
@@ -129,7 +131,7 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle'):
 
     print results
 
-    results.to_csv(context + r"/trunk/results/knnresults.csv",index=False)
+    results.to_csv(output_file,index=False)
 
     # Plot outputs
     # plt.scatter(X_test[:,0], Y_test,  color='black')
@@ -144,7 +146,7 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle'):
 
 def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm/svmmodel2.pickle'):
     model_data = GetModelDataCSV(src)
-    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
     X = np.array(tdata.drop(['DX_bl'], 1))
@@ -189,7 +191,7 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle'):
     predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
     # return model_dp
 
-    predict_csv = sd.SplitClassData(indata=predict_csv, file=False)
+    predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DX_bl'], 1))
@@ -207,7 +209,7 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle'):
 
     print results
 
-    results.to_csv(context + r"/trunk/results/svmresults.csv",index=False)
+    results.to_csv(r"/trunk/results/svmresults.csv",index=False)
 
     # Plot outputs
     # plt.scatter(X_test[:,0], Y_test,  color='black')
@@ -222,7 +224,7 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle'):
 
 def kmeans_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
     model_data = GetModelDataCSV(src)
-    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
     X = np.array(tdata.drop(['DX_bl'], 1))
@@ -294,7 +296,7 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
     predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
     # return model_dp
 
-    predict_csv = sd.SplitClassData(indata=predict_csv, file=False)
+    predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DX_bl'], 1))
@@ -312,7 +314,7 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
 
     print results
 
-    results.to_csv(context + r"/trunk/results/svmresults.csv",index=False)
+    results.to_csv(r"/trunk/results/svmresults.csv",index=False)
 
     #colors = 10*['r','g','b','c','k','y','m']
     #fig = plt.figure()
@@ -339,7 +341,7 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
 
 def mean_shift_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/means_shift/means_shiftmodel2.pickle'):
     model_data = GetModelDataCSV(src)
-    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
     original_X_cp = pd.DataFrame.copy(tdata)
 
@@ -443,7 +445,7 @@ def mean_shift_predict(model_loc='../trained_model/means_shift/means_shiftmodel2
     predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
     # return model_dp
 
-    predict_csv = sd.SplitClassData(indata=predict_csv, file=False)
+    predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DX_bl'], 1))
@@ -461,7 +463,7 @@ def mean_shift_predict(model_loc='../trained_model/means_shift/means_shiftmodel2
 
     print results
 
-    results.to_csv(context + r"/trunk/results/svmresults.csv",index=False)
+    results.to_csv(r"/trunk/results/svmresults.csv",index=False)
 
     # Plot outputs
     # plt.scatter(X_test[:,0], Y_test,  color='black')
@@ -481,7 +483,7 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
     np.random.seed(seed)
 
     model_data = GetModelDataCSV(src)
-    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
     # original_X_cp = pd.DataFrame.copy(tdata)
 
@@ -498,7 +500,7 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
     # convert integers to dummy variables (i.e. one hot encoded)
     dummy_Y = np_utils.to_categorical(encoded_Y)
 
-    clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
+    # clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
     # clf = baseline_model()
 
     kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
@@ -508,7 +510,11 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
 
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
 
-    clf.fit(X_train, Y_train, epochs=200, batch_size=5, verbose=1)
+    filepath = "../trained_model/keras/kerasmodel2.h5"
+    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+    callbacks_list = [checkpoint]
+
+    clf.fit(X_train, Y_train, callbacks=callbacks_list)
 
     test_score = clf.score(X_test, Y_test)
     test_predict = clf.predict(X_test)
@@ -516,6 +522,7 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
     print "test_score:", test_score
     print "test_predict:", test_predict
 
+    '''
     # saving model
     model_yaml = clf.model.to_yaml()
     # open(model_loc, 'w').write(json_model)
@@ -523,21 +530,25 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
         yaml_file.write(model_yaml)
     # saving weights
     clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
+    '''
+
+
 
 def keras_test(model_loc='../trained_model/keras/kerasmodel2.json'):
 
     predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
     # return model_dp
 
-    predict_csv = sd.SplitClassData(indata=predict_csv, file=False)
+    predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DX_bl'], 1))
 
     predict_data = preprocessing.scale(predict_data)
 
-    # clf = KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
+    clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
 
+    '''
     # loading model
     yaml_file = open('model.yaml', 'r')
     loaded_model_yaml = yaml_file.read()
@@ -548,6 +559,9 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.json'):
 
     clf.load_weights("../trained_model/keras/kerasmodel2.h5")
     clf.compile(loss='categorical_crossentropy', optimizer='adam')
+    '''
+
+    clf = load_model("../trained_model/keras/kerasmodel2.h5")
 
     # clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
     # load json and create model
@@ -578,7 +592,7 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.json'):
 
     print results
 
-    results.to_csv(context + r"/trunk/results/keras2results.csv",index=False)
+    results.to_csv(r"/trunk/results/keras2results.csv",index=False)
 
 def build_by_loading(self):
     model = load_model('../trained_model/keras/kerasmodel2.h5')
@@ -609,7 +623,7 @@ def baseline_model():
 
 def random_forest_regressor(src=r"../train/TADPOLE_train.csv"):
     model_data = GetModelDataCSV(src)
-    split_classes = sd.SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
     X = np.array(tdata.drop(['DX_bl'], 1))
@@ -638,12 +652,12 @@ def random_forest_regressor(src=r"../train/TADPOLE_train.csv"):
     for item in sorted([(round(np.mean(score), 8), feat) for feat, score in scores.items()], reverse=True)[:20]:
         print item
 
-    json.dump(scores, open('rfr_scores.json', 'w'))
+    json.dump(scores, open('../trained_model/random_forest/rfr_scores.json', 'w'))
 
 
 
 def rfc_results():
-    dict_load = json.load(open('rfr_scores.json', 'r'))
+    dict_load = json.load(open('../trained_model/random_forest/rfr_scores.json', 'r'))
     for item in sorted([(round(np.mean(dict_load), 8), feat) for feat, dict_load in dict_load.items()], reverse=True)[:20]:
         print item
 
@@ -757,7 +771,7 @@ def GetModelDataCSV(indata):
 
     return model_dp
 
-def SplitClassData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv", file=True):
+def SplitClassData(indata=r"/trunk/src/train/TADPOLE_D1.csv", file=True):
 
     if file:
         tadpole_dp = pd.read_csv(indata, low_memory=False)
@@ -768,8 +782,8 @@ def SplitClassData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv", file=Tru
     ad_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "AD"]
     mci_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "MCI"]
     # print mci_data.head()
-    c_data = pd.concat([ad_data,cn_data, mci_data])
-    # c_data = pd.concat([ad_data,cn_data])
+    # c_data = pd.concat([ad_data,cn_data, mci_data])
+    c_data = pd.concat([ad_data,cn_data])
 
     print ('Total data shape:', tadpole_dp.shape)
     return c_data
@@ -789,7 +803,7 @@ if __name__ == "__main__":
     # TestModel()
 
     # keras_train()
-    # keras_test()
+    keras_test()
 
     # random_forest_regressor()
     rfc_results()

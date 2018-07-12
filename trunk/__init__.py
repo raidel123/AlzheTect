@@ -27,6 +27,7 @@ import dbconnect as db
 sys.path.append(appContext + "/src/utils")
 
 import dbconnect as db
+import mlearning as ml
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/', methods=['GET', 'POST'])
@@ -64,9 +65,20 @@ def StatsPage():
 @app.route('/alzhetect/', methods=['GET', 'POST'])
 def AlzhetectPage():
 
-    def GetSetRelevantFields():
-        return  [
-                'RID','DX_bl','DX','EXAMDATE',
+    conn = db.OpenConnection(appContext + '/src/sqldb/alzhetect.db')
+
+    # query_features =
+
+    # checkboxes = GenerateCheckbox(conn, query_features)
+
+    #selected_features = {"th" : query_features.keys(), "td" : query_features.values.tolist()}
+    field_name = db.QueryDB("SELECT Field_Name FROM selected_features;", conn).values.tolist()
+    field_type = db.QueryDB("SELECT Measurement_Type FROM selected_features;", conn).values.tolist()
+
+    patient_input_fields = {"field_name":field_name, "field_type":field_type}
+
+    '''
+    patient_input_fields =  [
                 'MMSE_bl',
                 'CDRSB',
                 'ADAS13',
@@ -88,8 +100,11 @@ def AlzhetectPage():
                 'WholeBrain',
                 'LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16',
                 ]
+    '''
 
-    return render_template("alzhetect.html")
+    db.CloseConnection(conn)
+
+    return render_template("alzhetect.html", patient_input_fields=patient_input_fields)
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def ContactPage():
@@ -99,8 +114,16 @@ def ContactPage():
 def upload_file():
    if request.method == 'POST':
       f = request.files['file']
-      f.save(secure_filename(f.filename))
+      f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
+      ml.knn_predict(model_loc="src/trained_model/knn/knnmodel2.pickle", input_data="results/uploads/upload.csv", output_file="static/results.csv")
+
       return 'file uploaded successfully'
+
+@app.route('/fieldloader/', methods = ['GET', 'POST'])
+def upload_fields():
+    if request.method == 'POST':
+        print request.form.to_dict()
+    return "Field Loader Success"
 
 # ----------------------------------------------------------------------------
 def GenerateCheckbox(conn, query_features):
