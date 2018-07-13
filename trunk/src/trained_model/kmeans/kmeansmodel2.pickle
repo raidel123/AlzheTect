@@ -63,7 +63,7 @@ S'auto'
 p26
 sS'n_iter_'
 p27
-I3
+I17
 sS'init'
 p28
 S'k-means++'

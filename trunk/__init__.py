@@ -28,7 +28,7 @@ import dbconnect as db
 sys.path.append(appContext + "/src/utils")
 
 import dbconnect as db
-import mlearning as ml
+# import mlearning as ml
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/', methods=['GET', 'POST'])
@@ -78,36 +78,15 @@ def AlzhetectPage():
 
     patient_input_fields = {"field_name":field_name, "field_type":field_type}
 
-    '''
-    patient_input_fields =  [
-                'MMSE_bl',
-                'CDRSB',
-                'ADAS13',
-                'ADAS11',
-                'RAVLT_immediate',
-                'MMSE',
-                'APOE4',
-                'LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16',
-                'ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
-                'ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
-                'Hippocampus',
-                'ST82TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
-                'ST39TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
-                'ST82TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
-                'ST83CV_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
-                'ST30SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
-                'ST109TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
-                'AV45',
-                'WholeBrain',
-                'LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16',
-                ]
-    '''
-
-    results = [0]
+    algo_accuracy = [ {"a_id":"kmeans", "a_name":"K-Means Clustering", "a_accuracy":80},
+                      {"a_id":"knn", "a_name":"K-Nearest Neighbors", "a_accuracy":95},
+                      {"a_id":"svm", "a_name":"Support Vector Machine", "a_accuracy":97},
+                      {"a_id":"dnn", "a_name":"Deep Neural Network", "a_accuracy":98}
+                    ]
 
     db.CloseConnection(conn)
 
-    return render_template("alzhetect.html", patient_input_fields=patient_input_fields, results=results)
+    return render_template("alzhetect.html", patient_input_fields=patient_input_fields, algo_accuracy=algo_accuracy)
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def ContactPage():
@@ -118,6 +97,7 @@ def upload_file():
    if request.method == 'POST':
       f = request.files['file']
       in_file = f.read()
+      in_file = io.StringIO(unicode(in_file))
       # print type(in_file)
       # print pd.DataFrame([sub.split(",")]f.read())
       # f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
@@ -126,7 +106,7 @@ def upload_file():
       # return model_dp
       # print io.StringIO(unicode(in_file)).getvalue()
 
-      results = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=io.StringIO(unicode(in_file)), output_file=appContext+"/static/results.csv")
+      # results = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=in_file, output_file=appContext+"/static/results.csv")
 
       return render_template("contact.html", results=results.values.tolist())
 

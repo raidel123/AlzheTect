@@ -31,10 +31,30 @@
     </div>
   </section>
 
-  <section id="classifier">
+  <section id="accuracy_meter">
+    <div class="container">
+      <div class="row col-lg-12">
+        <h2>Classification Accuracy</h2>
+      </div>
+
+      {% for algo in algo_accuracy %}
+
+      <div class="col-lg-11 w3-margin-top">
+        <p>{{algo.a_name}}:</p>
+        <div class="w3-light-grey">
+          <div id="{{algo.a_id}}" class="percent_bar w3-container w3-red w3-center" style="width:{{algo.a_accuracy}}%">{{algo.a_accuracy}}</div>
+        </div>
+      </div>
+
+      {% endfor %}
+
+    </div>
+  </section>
+
+  <section id="classifier" class="bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-lg-12 mx-auto">
+        <div class="col-lg-12">
           <h2>Zhetect (Classifier)</h2>
         </div>
       </div>
@@ -105,7 +125,7 @@
   </section>
   -->
 
-  <section id="results" class="bg-light">
+  <section id="results">
     <div class="container">
       <div class="row">
         <div class="col-lg-12 mx-auto">
@@ -113,9 +133,6 @@
           <div class="row w3-margin-top col-lg-11 mx-auto">
             <!-- Uploaded file in different location than HTML file -->
             <a class="mx-auto" href="{{ url_for('static', filename='results.csv') }}" download>DownLoadddd</a>
-          </div>
-          <div class="row w3-margin-top col-lg-11 mx-auto">
-            {{results}}
           </div>
         </div>
       </div>

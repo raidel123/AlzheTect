@@ -30,3 +30,29 @@ function changeInput(self, show_id){
   // $('#classifier_input').append(newDiv2);
 
 }
+
+function move(bar_id, accuracy) {
+  var elem = document.getElementById(bar_id);
+  var width = 0;
+  var id = setInterval(frame, 25);
+  function frame() {
+    if (width >= accuracy) {
+      clearInterval(id);
+    } else {
+      width++;
+      elem.style.width = width + '%';
+      elem.innerHTML = width * 1  + '%';
+    }
+  }
+}
+
+function trigger_bars(){
+  var bars = document.getElementsByClassName("percent_bar");
+
+  var i;
+  for (i=0; i < bars.length; i++){
+    move(bars[i].id, bars[i].innerHTML)
+  }
+}
+
+trigger_bars();

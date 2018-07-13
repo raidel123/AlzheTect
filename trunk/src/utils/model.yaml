@@ -5,6 +5,7 @@ config:
   config:
     activation: relu
     activity_regularizer: null
+    batch_input_shape: !!python/tuple [null, 20]
     bias_constraint: null
     bias_initializer:
       class_name: Zeros
@@ -15,7 +16,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_111
+    name: dense_1
     trainable: true
     units: 128
     use_bias: true
@@ -33,7 +34,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_112
+    name: dense_2
     trainable: true
     units: 128
     use_bias: true
@@ -51,7 +52,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_113
+    name: dense_3
     trainable: true
     units: 128
     use_bias: true
@@ -69,7 +70,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_114
+    name: dense_4
     trainable: true
     units: 64
     use_bias: true
@@ -87,7 +88,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_115
+    name: dense_5
     trainable: true
     units: 64
     use_bias: true
@@ -105,7 +106,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_116
+    name: dense_6
     trainable: true
     units: 64
     use_bias: true
@@ -123,7 +124,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_117
+    name: dense_7
     trainable: true
     units: 32
     use_bias: true
@@ -141,7 +142,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_118
+    name: dense_8
     trainable: true
     units: 32
     use_bias: true
@@ -159,7 +160,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_119
+    name: dense_9
     trainable: true
     units: 32
     use_bias: true
@@ -177,7 +178,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_120
+    name: dense_10
     trainable: true
     units: 16
     use_bias: true
@@ -195,7 +196,7 @@ config:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
-    name: dense_121
+    name: dense_11
     trainable: true
     units: 2
     use_bias: true

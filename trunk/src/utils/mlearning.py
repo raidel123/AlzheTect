@@ -74,8 +74,8 @@ def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn
 
     X = preprocessing.scale(X)
 
-    print X, Y
-    print (len(X), len(Y))
+    # print X, Y
+    # print (len(X), len(Y))
 
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
 
@@ -89,8 +89,8 @@ def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn
     test_score = clf.score(X_test, Y_test)
     test_predict = clf.predict(X_test)
 
-    print "test score:", test_score
-    print "**test predict**", test_predict
+    print "KNN test score:", test_score
+    print "KNN test predict:", test_predict
 
     # Plot outputs
     # plt.scatter(X_test[:,0], Y_test,  color='black')
@@ -157,8 +157,8 @@ def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm
 
     X = preprocessing.scale(X)
 
-    print X, Y
-    print (len(X), len(Y))
+    # print X, Y
+    # print (len(X), len(Y))
 
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
 
@@ -171,8 +171,8 @@ def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm
     test_score = clf.score(X_test, Y_test)
     test_predict = clf.predict(X_test)
 
-    print "test score:", test_score
-    print "**test predict**", test_predict
+    print "SVM test score:", test_score
+    print "SVM test predict:", test_predict
 
     # Plot outputs
     # plt.scatter(X_test[:,0], Y_test,  color='black')
@@ -185,12 +185,12 @@ def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm
 
     # svm_predict()
 
-def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle'):
+def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data="../../results/uploads/upload.csv"):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
 
-    predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
+    predict_csv = GetModelDataCSV(input_data)
     # return model_dp
 
     predict_csv = SplitClassData(indata=predict_csv, file=False)
@@ -202,16 +202,18 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle'):
 
     prediction = clf.predict(predict_data)
     probability = clf.predict_proba(predict_data)
-    print "**Prediction**", prediction
-    print "**probability**", probability
+    # print "**Prediction**", prediction
+    # print "**probability**", probability
 
     results = predict_csv[['RID', 'DX_bl']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
-    print results
+    # print results
 
-    results.to_csv(r"/trunk/results/svmresults.csv",index=False)
+    # results.to_csv(r"/trunk/results/svmresults.csv",index=False)
+
+    return results
 
     # Plot outputs
     # plt.scatter(X_test[:,0], Y_test,  color='black')
@@ -252,15 +254,15 @@ def kmeans_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/
         predict_X = predict_X.reshape(-1, len(predict_X))
         pred = clf.predict(predict_X)
 
-        print pred[0], Y[i]
+        # print pred[0], Y[i]
         if pred[0] == Y[i]:
             correct += 1
 
-    print correct
-    print "***correct percent:***", float(correct)/float(len(X))
+    # print correct
+    print "kmeans correct percent:***", float(correct)/float(len(X))
 
-    labels = clf.labels_
-    cluster_centers = clf.cluster_centers_
+    # labels = clf.labels_
+    # cluster_centers = clf.cluster_centers_
 
     '''
     colors = 10*['r','g','b','c','k','y','m']
@@ -318,7 +320,7 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
 
     print results
 
-    results.to_csv(r"/trunk/results/svmresults.csv",index=False)
+    # results.to_csv(r"/trunk/results/svmresults.csv",index=False)
 
     #colors = 10*['r','g','b','c','k','y','m']
     #fig = plt.figure()
@@ -504,27 +506,38 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
     # convert integers to dummy variables (i.e. one hot encoded)
     dummy_Y = np_utils.to_categorical(encoded_Y)
 
-    # clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
+    clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
     # clf = baseline_model()
 
-    kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
+    # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
 
-    results = cross_val_score(clf, X, dummy_Y, cv=kfold)
-    print("Result: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+    # results = cross_val_score(clf, X, dummy_Y, cv=kfold)
+    # print("Result: %.2f (%.2f) MSE" % (results.mean(), results.std()))
 
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
 
     filepath = "../trained_model/keras/kerasmodel2.h5"
-    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
+    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
     callbacks_list = [checkpoint]
 
     clf.fit(X_train, Y_train, callbacks=callbacks_list)
 
+    scores = clf.model.evaluate(X_train, Y_train, verbose=0)
+    print("%s: %.2f%%" % (clf.model.metrics_names[1], scores[1]*100))
+
     test_score = clf.score(X_test, Y_test)
     test_predict = clf.predict(X_test)
 
-    print "test_score:", test_score
-    print "test_predict:", test_predict
+    print "keras test_score:", test_score
+    print "keras test_predict:", test_predict
+
+    # serialize model to YAML
+    model_yaml = clf.model.to_yaml()
+    with open("model.yaml", "w") as yaml_file:
+        yaml_file.write(model_yaml)
+    # serialize weights to HDF5
+    clf.model.save_weights("model.h5")
+    print("Saved model to disk")
 
     '''
     # saving model
@@ -538,19 +551,27 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
 
 
 
-def keras_test(model_loc='../trained_model/keras/kerasmodel2.json'):
+def keras_test(model_loc='../trained_model/keras/kerasmodel2.json', input_data="../../results/uploads/upload.csv"):
 
-    predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
+    predict_csv = GetModelDataCSV(input_data)
     # return model_dp
 
     predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DX_bl'], 1))
+    predict_lbl = np.array(split_classes['DX_bl'])
 
     predict_data = preprocessing.scale(predict_data)
 
-    clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(predict_lbl)
+    encoded_Y = encoder.transform(predict_lbl)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    # clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
 
     '''
     # loading model
@@ -565,7 +586,21 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.json'):
     clf.compile(loss='categorical_crossentropy', optimizer='adam')
     '''
 
-    clf = load_model("../trained_model/keras/kerasmodel2.h5")
+    # load YAML and create model
+    yaml_file = open('model.yaml', 'r')
+    loaded_model_yaml = yaml_file.read()
+    yaml_file.close()
+    clf = model_from_yaml(loaded_model_yaml)
+    # load weights into new model
+    clf.load_weights("model.h5")
+    print("Loaded model from disk")
+
+    # evaluate loaded model on test data
+    clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    score = clf.evaluate(predict_data, dummy_Y, verbose=0)
+    print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
+
+    # clf = load_model("../trained_model/keras/kerasmodel2.h5")
 
     # clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
     # load json and create model
@@ -596,9 +631,9 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.json'):
 
     print results
 
-    results.to_csv(r"/trunk/results/keras2results.csv",index=False)
+    # results.to_csv(r"/trunk/results/keras2results.csv",index=False)
 
-def build_by_loading(self):
+def build_by_loading():
     model = load_model('../trained_model/keras/kerasmodel2.h5')
     return model
 
@@ -638,7 +673,7 @@ def random_forest_regressor(src=r"../train/TADPOLE_train.csv"):
 
     names = list(tdata.drop(['DX_bl'], 1).columns.values)
 
-    rf = RandomForestRegressor(n_estimators=20, max_features=20, n_jobs=-1, verbose=1)
+    rf = RandomForestRegressor(n_estimators=20, max_features=20, n_jobs=-1, verbose=0)
     scores = defaultdict(list)
 
     #crossvalidate the scores on a number of different random splits of the data
@@ -799,6 +834,7 @@ if __name__ == "__main__":
 
     # svm_train()
     # svm_predict()
+
     # kmeans_train()
 
     # mean_shift_train()
@@ -810,4 +846,4 @@ if __name__ == "__main__":
     keras_test()
 
     # random_forest_regressor()
-    rfc_results()
+    # rfc_results()
