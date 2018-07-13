@@ -6,9 +6,11 @@ import pandas as pd
 import numpy as np
 import math
 import io
+from copy import deepcopy
 
 app = Flask(__name__)
 appContext = os.path.abspath(os.path.dirname(__file__))
+
 '''
 # get main project path (in case this file is compiled alone)
 if os.name == 'nt':
@@ -28,7 +30,7 @@ import dbconnect as db
 sys.path.append(appContext + "/src/utils")
 
 import dbconnect as db
-# import mlearning as ml
+import mlearning as ml
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home/', methods=['GET', 'POST'])
@@ -98,6 +100,7 @@ def upload_file():
       f = request.files['file']
       in_file = f.read()
       in_file = io.StringIO(unicode(in_file))
+      # in_file = in_file.copy()
       # print type(in_file)
       # print pd.DataFrame([sub.split(",")]f.read())
       # f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
@@ -106,9 +109,12 @@ def upload_file():
       # return model_dp
       # print io.StringIO(unicode(in_file)).getvalue()
 
-      # results = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=in_file, output_file=appContext+"/static/results.csv")
+      results = {}
+      results['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file), output_file=appContext+"/static/results.csv").values.tolist()
+      results['svm'] = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+      results['keras'] = ml.keras_test(model_loc=appContext+"/src/trained_model/keras/kerasmodel2.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2.h5", input_data=deepcopy(in_file)).values.tolist()
 
-      return render_template("contact.html", results=results.values.tolist())
+      return render_template("contact.html", results=results)
 
 @app.route('/fieldloader/', methods = ['GET', 'POST'])
 def upload_fields():

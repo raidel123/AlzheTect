@@ -482,7 +482,7 @@ def mean_shift_predict(model_loc='../trained_model/means_shift/means_shiftmodel2
 
 # ------------------------ DNN Classifier ---------------------------
 
-def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2.yaml'):
+def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5"):
 
     # fix random seed for reproducibility
     seed = 7
@@ -516,11 +516,11 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
 
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
 
-    filepath = "../trained_model/keras/kerasmodel2.h5"
-    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
-    callbacks_list = [checkpoint]
+    # filepath = "../trained_model/keras/kerasmodel2.h5"
+    # checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
+    # callbacks_list = [checkpoint]
 
-    clf.fit(X_train, Y_train, callbacks=callbacks_list)
+    clf.fit(X_train, Y_train) # , callbacks=callbacks_list)
 
     scores = clf.model.evaluate(X_train, Y_train, verbose=0)
     print("%s: %.2f%%" % (clf.model.metrics_names[1], scores[1]*100))
@@ -533,10 +533,10 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
 
     # serialize model to YAML
     model_yaml = clf.model.to_yaml()
-    with open("model.yaml", "w") as yaml_file:
+    with open(model_loc, "w") as yaml_file:
         yaml_file.write(model_yaml)
     # serialize weights to HDF5
-    clf.model.save_weights("model.h5")
+    clf.model.save_weights(weights_loc)
     print("Saved model to disk")
 
     '''
@@ -551,7 +551,7 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
 
 
 
-def keras_test(model_loc='../trained_model/keras/kerasmodel2.json', input_data="../../results/uploads/upload.csv"):
+def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5", input_data="../../results/uploads/upload.csv"):
 
     predict_csv = GetModelDataCSV(input_data)
     # return model_dp
@@ -587,12 +587,12 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.json', input_data="
     '''
 
     # load YAML and create model
-    yaml_file = open('model.yaml', 'r')
+    yaml_file = open(model_loc, 'r')
     loaded_model_yaml = yaml_file.read()
     yaml_file.close()
     clf = model_from_yaml(loaded_model_yaml)
     # load weights into new model
-    clf.load_weights("model.h5")
+    clf.load_weights(weights_loc)
     print("Loaded model from disk")
 
     # evaluate loaded model on test data
@@ -621,15 +621,19 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.json', input_data="
     # loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
     prediction = clf.predict(predict_data)
+    # for pred in prediction:
+    prediction = [0 if pred[0] > pred[1] else 1 for pred in prediction]
     probability = clf.predict_proba(predict_data)
-    print "**Prediction**", prediction
-    print "**probability**", probability
+    # print "**Prediction**", pred
+    # print "**probability**", probability
 
     results = predict_csv[['RID', 'DX_bl']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
-    print results
+    # results.to_csv(r"/trunk/results/svmresults.csv",index=False)
+
+    return results
 
     # results.to_csv(r"/trunk/results/keras2results.csv",index=False)
 
@@ -842,7 +846,7 @@ if __name__ == "__main__":
     # TrainModel()
     # TestModel()
 
-    # keras_train()
+    keras_train()
     keras_test()
 
     # random_forest_regressor()
