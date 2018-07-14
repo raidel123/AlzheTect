@@ -325,7 +325,7 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle', inpu
             correct += 1
 
     # print correct
-    # print "kmeans correct percent:***", float(correct)/float(len(predict_data))
+    pred_acc = float(correct)/float(len(predict_data))
 
     prediction = clf.predict(predict_data)
     # probability = clf.predict_proba(predict_data)
@@ -334,6 +334,7 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle', inpu
 
     results = predict_csv[['RID', 'DX_bl']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+    results['probability'] = [pred_acc for p in range(len(prediction))]
     # results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
     return results

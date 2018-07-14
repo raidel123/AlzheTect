@@ -1,17 +1,44 @@
 $(document).ready(function() {
+  $('table.display').DataTable({
+    "scrollY": "400px",
+    "paging": false,
+    "responsive": true
+  });
 
 
+  /*
   var table = $('#important_features').DataTable({
     "scrollY": "400px",
     "paging": false,
     "responsive": true
   });
 
-  var table = $('#select_visual').DataTable({
+  var table = $('#kmeans').DataTable({
     "scrollY": "400px",
     "paging": false,
     "responsive": true
   });
+
+  var table = $('#svm').DataTable({
+    "scrollY": "400px",
+    "paging": false,
+    "responsive": true
+  });
+
+  var table = $('#keras').DataTable({
+    "scrollY": "400px",
+    "paging": false,
+    "responsive": true
+  });
+
+  var table = $('#knn').DataTable({
+    "scrollY": "400px",
+    "paging": false,
+    "responsive": true
+  });
+  */
+
+
 
   /*
     $('#important_features tbody').on('click', 'tr', function () {

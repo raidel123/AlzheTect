@@ -83,7 +83,7 @@ def AlzhetectPage():
     algo_accuracy = [ {"a_id":"kmeans", "a_name":"K-Means Clustering", "a_accuracy":80},
                       {"a_id":"knn", "a_name":"K-Nearest Neighbors", "a_accuracy":95},
                       {"a_id":"svm", "a_name":"Support Vector Machine", "a_accuracy":97},
-                      {"a_id":"dnn", "a_name":"Deep Neural Network", "a_accuracy":98}
+                      {"a_id":"dnn", "a_name":"Deep Neural Network", "a_accuracy":99}
                     ]
 
     db.CloseConnection(conn)
@@ -102,10 +102,17 @@ def AlzhetectPage():
        # return model_dp
        # print io.StringIO(unicode(in_file)).getvalue()
 
-       results['kmeans'] = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-       results['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-       results['svm'] = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-       results['keras'] = ml.keras_test(model_loc=appContext+"/src/trained_model/keras/kerasmodel2.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2.h5", input_data=deepcopy(in_file)).values.tolist()
+       result_cols = ['RID', 'DX', 'Prediction', 'Prediction Probability']
+
+       result_vals = {}
+       result_vals['kmeans'] = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+       result_vals['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+       result_vals['svm'] = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+       result_vals['keras'] = ml.keras_test(model_loc=appContext+"/src/trained_model/keras/kerasmodel2.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2.h5", input_data=deepcopy(in_file)).values.tolist()
+
+
+       results['result_cols'] = result_cols
+       results['result_vals'] = result_vals
 
     return render_template("alzhetect.html", patient_input_fields=patient_input_fields, algo_accuracy=algo_accuracy, results=results)
 

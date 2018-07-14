@@ -130,24 +130,50 @@
       <div class="row">
         <div class="col-lg-12 mx-auto">
           <h2>Results</h2>
-          <div class="row w3-margin-top col-lg-11 mx-auto">
-            <!-- Uploaded file in different location than HTML file -->
-            <!-- <a class="mx-auto" href="{{ url_for('static', filename='results.csv') }}" download>DownLoadddd</a> -->
-
-            {% if results|length > 0 %}
-
-            <p class="lead">{{results.kmeans}}</p>
-            <br>
-            <p class="lead">{{results.knn}}</p>
-            <br>
-            <p class="lead">{{results.svm}}</p>
-            <br>
-            <p class="lead">{{results.keras}}</p>
-
-            {% endif %}
-
-          </div>
         </div>
+        <div class="col-lg-8 w3-margin-top w3-margin-bottom mx-auto">
+          <!-- Uploaded file in different location than HTML file -->
+          <!-- <a class="mx-auto" href="{{ url_for('static', filename='results.csv') }}" download>DownLoadddd</a> -->
+
+          {% if results|length > 0 %}
+          {% for key, val in results.result_vals.items() %}
+          <div class="w3-card w3-margin-top w3-center">
+            <table id="{{key}}" class="display" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>RID</th>
+                  <th>DX</th>
+                  <th>Prediction</th>
+                  <th>Prediction Probability</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in val %}
+                <tr>
+                  {% for i in item %}
+                  <td>{{i}}</td>
+                  {% endfor %}
+                </tr>
+
+                {% endfor %}
+              </tbody>
+            </table>
+            <!--
+            <div class="row col-lg-8 mx-auto w3-margin-top">
+              <label class="radio-inline mx-auto">
+                <input id="pie_chart" value="pie" class="w3-margin" type="radio" name="chart_type" checked="checked" onchange="changeGraph(this)">Pie Chart
+              </label>
+              <label class="radio-inline mx-auto">
+                <input id="bar_chart" value="bar" class="w3-margin" type="radio" name="chart_type" onchange="changeGraph(this)">Bar Graph
+              </label>
+            </div>
+            -->
+          </div>
+          {% endfor %}
+          {% endif %}
+
+        </div>
+
       </div>
     </div>
   </section>
