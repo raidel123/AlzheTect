@@ -110,7 +110,8 @@ def upload_file():
       # print io.StringIO(unicode(in_file)).getvalue()
 
       results = {}
-      results['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file), output_file=appContext+"/static/results.csv").values.tolist()
+      results['kmeans'] = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+      results['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
       results['svm'] = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
       results['keras'] = ml.keras_test(model_loc=appContext+"/src/trained_model/keras/kerasmodel2.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2.h5", input_data=deepcopy(in_file)).values.tolist()
 

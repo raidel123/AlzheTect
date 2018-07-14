@@ -35,6 +35,7 @@ from keras.utils import np_utils
 from keras.models import model_from_yaml
 from keras.models import load_model
 from keras.callbacks import ModelCheckpoint
+from keras import backend as K
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
@@ -132,6 +133,8 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
     # print results
 
     # results.to_csv(output_file,index=False)
+
+    K.clear_session()
 
     return results
 
@@ -295,11 +298,11 @@ def kmeans_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/
     # svm_predict()
     '''
 
-def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
+def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle', input_data="../test/TADPOLE_test.csv"):
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
 
-    predict_csv = GetModelDataCSV(r"../test/TADPOLE_test.csv")
+    predict_csv = GetModelDataCSV(input_data)
     # return model_dp
 
     predict_csv = SplitClassData(indata=predict_csv, file=False)
@@ -308,17 +311,32 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle'):
     predict_data = np.array(split_classes.drop(['DX_bl'], 1))
 
     predict_data = preprocessing.scale(predict_data)
+    dx_data = split_classes['DX_bl']
+    dx_data = np.array([Resulbinarizer(label) for label in dx_data])
+
+    correct = 0
+    for i in range(len(predict_data)):
+        predict_X = np.array(predict_data[i].astype(float))
+        predict_X = predict_X.reshape(-1, len(predict_X))
+        pred = clf.predict(predict_X)
+
+        # print pred[0], dx_data[i]
+        if pred[0] == dx_data[i]:
+            correct += 1
+
+    # print correct
+    # print "kmeans correct percent:***", float(correct)/float(len(predict_data))
 
     prediction = clf.predict(predict_data)
-    probability = clf.predict_proba(predict_data)
-    print "**Prediction**", prediction
-    print "**probability**", probability
+    # probability = clf.predict_proba(predict_data)
+    # print "**Prediction**", prediction
+    # print "**probability**", probability
 
     results = predict_csv[['RID', 'DX_bl']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
-    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
+    # results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
-    print results
+    return results
 
     # results.to_csv(r"/trunk/results/svmresults.csv",index=False)
 
@@ -840,14 +858,15 @@ if __name__ == "__main__":
     # svm_predict()
 
     # kmeans_train()
+    kmeans_predict()
 
     # mean_shift_train()
 
     # TrainModel()
     # TestModel()
 
-    keras_train()
-    keras_test()
+    # keras_train()
+    # keras_test()
 
     # random_forest_regressor()
     # rfc_results()
