@@ -88,7 +88,26 @@ def AlzhetectPage():
 
     db.CloseConnection(conn)
 
-    return render_template("alzhetect.html", patient_input_fields=patient_input_fields, algo_accuracy=algo_accuracy)
+    results={}
+    if request.method == 'POST':
+       f = request.files['file']
+       in_file = f.read()
+       in_file = io.StringIO(unicode(in_file))
+       # in_file = in_file.copy()
+       # print type(in_file)
+       # print pd.DataFrame([sub.split(",")]f.read())
+       # f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
+       # redict_csv = ml.GetModelDataCSV(io.StringIO(unicode(in_file)))
+       # print predict_csv
+       # return model_dp
+       # print io.StringIO(unicode(in_file)).getvalue()
+
+       results['kmeans'] = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+       results['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+       results['svm'] = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
+       results['keras'] = ml.keras_test(model_loc=appContext+"/src/trained_model/keras/kerasmodel2.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2.h5", input_data=deepcopy(in_file)).values.tolist()
+
+    return render_template("alzhetect.html", patient_input_fields=patient_input_fields, algo_accuracy=algo_accuracy, results=results)
 
 @app.route('/contact/', methods=['GET', 'POST'])
 def ContactPage():
@@ -96,26 +115,7 @@ def ContactPage():
 
 @app.route('/uploader/', methods = ['GET', 'POST'])
 def upload_file():
-   if request.method == 'POST':
-      f = request.files['file']
-      in_file = f.read()
-      in_file = io.StringIO(unicode(in_file))
-      # in_file = in_file.copy()
-      # print type(in_file)
-      # print pd.DataFrame([sub.split(",")]f.read())
-      # f.save("results/uploads/upload.csv") # + secure_filename(f.filename))
-      # redict_csv = ml.GetModelDataCSV(io.StringIO(unicode(in_file)))
-      # print predict_csv
-      # return model_dp
-      # print io.StringIO(unicode(in_file)).getvalue()
-
-      results = {}
-      results['kmeans'] = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-      results['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-      results['svm'] = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-      results['keras'] = ml.keras_test(model_loc=appContext+"/src/trained_model/keras/kerasmodel2.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2.h5", input_data=deepcopy(in_file)).values.tolist()
-
-      return render_template("contact.html", results=results)
+    pass
 
 @app.route('/fieldloader/', methods = ['GET', 'POST'])
 def upload_fields():
