@@ -43,6 +43,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.cross_validation import ShuffleSplit
 from sklearn.metrics import r2_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
 from collections import defaultdict
 
 '''
@@ -69,8 +71,8 @@ def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn
     split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
-    X = np.array(tdata.drop(['DX_bl'], 1))
-    Y = np.array(tdata['DX_bl'])
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
     Y = np.array([Resulbinarizer(label) for label in Y])
 
     X = preprocessing.scale(X)
@@ -105,7 +107,7 @@ def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn
 
     # knn_predict()
 
-def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data="../../results/uploads/upload.csv", output_file="../../results/uploads/results.csv", file=True):
+def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data="../test/TADPOLE_test.csv", output_file="../../results/uploads/results.csv", file=True):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
@@ -116,7 +118,7 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
     predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
-    predict_data = np.array(split_classes.drop(['DX_bl'], 1))
+    predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
 
     predict_data = preprocessing.scale(predict_data)
 
@@ -126,8 +128,16 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
     # print "**probability**", probability
 
 
-    results = predict_csv[['RID', 'DX_bl']].copy()
+
+    results = predict_csv[['RID', 'DXCHANGE']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+
+    scores = accuracy_score(results['DXCHANGE'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
+    print conf_mat
+
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
     # print results
@@ -154,8 +164,8 @@ def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm
     split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
-    X = np.array(tdata.drop(['DX_bl'], 1))
-    Y = np.array(tdata['DX_bl'])
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
     Y = np.array([Resulbinarizer(label) for label in Y])
 
     X = preprocessing.scale(X)
@@ -188,7 +198,7 @@ def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm
 
     # svm_predict()
 
-def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data="../../results/uploads/upload.csv"):
+def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data="../test/TADPOLE_test.csv"):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
@@ -199,7 +209,7 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data=".
     predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
-    predict_data = np.array(split_classes.drop(['DX_bl'], 1))
+    predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
 
     predict_data = preprocessing.scale(predict_data)
 
@@ -208,13 +218,20 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data=".
     # print "**Prediction**", prediction
     # print "**probability**", probability
 
-    results = predict_csv[['RID', 'DX_bl']].copy()
+    results = predict_csv[['RID', 'DXCHANGE']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+
+    scores = accuracy_score(results['DXCHANGE'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
+    print conf_mat
+
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
     # print results
 
-    # results.to_csv(r"/trunk/results/svmresults.csv",index=False)
+    # results.to_csv(r"../../results/svmresults.csv",index=False)
 
     return results
 
@@ -234,8 +251,8 @@ def kmeans_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/
     split_classes = SplitClassData(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
-    X = np.array(tdata.drop(['DX_bl'], 1))
-    Y = np.array(tdata['DX_bl'])
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
     Y = np.array([Resulbinarizer(label) for label in Y])
 
     X = preprocessing.scale(X)
@@ -245,7 +262,7 @@ def kmeans_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/
 
     # X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
 
-    clf = KMeans(n_clusters=2)
+    clf = KMeans(n_clusters=3)
     clf.fit(X)
 
     with open(model_loc, 'wb') as f:
@@ -308,10 +325,10 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle', inpu
     predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
-    predict_data = np.array(split_classes.drop(['DX_bl'], 1))
+    predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
 
     predict_data = preprocessing.scale(predict_data)
-    dx_data = split_classes['DX_bl']
+    dx_data = split_classes['DXCHANGE']
     dx_data = np.array([Resulbinarizer(label) for label in dx_data])
 
     correct = 0
@@ -332,11 +349,19 @@ def kmeans_predict(model_loc='../trained_model/kmeans/kmeansmodel2.pickle', inpu
     # print "**Prediction**", prediction
     # print "**probability**", probability
 
-    results = predict_csv[['RID', 'DX_bl']].copy()
+    results = predict_csv[['RID', 'DXCHANGE']].copy()
     results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+
+    scores = accuracy_score(results['DXCHANGE'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
+    print conf_mat
+
     results['probability'] = [pred_acc for p in range(len(prediction))]
     # results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
+    # results.to_csv(r"../../results/kmeansresults.csv",index=False)
     return results
 
     # results.to_csv(r"/trunk/results/svmresults.csv",index=False)
@@ -508,13 +533,13 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
     np.random.seed(seed)
 
     model_data = GetModelDataCSV(src)
-    split_classes = SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassDataCN(indata=model_data, file=False)
     tdata = TransformData(split_classes)
     # original_X_cp = pd.DataFrame.copy(tdata)
 
-    X = np.array(tdata.drop(['DX_bl'], 1))
-    Y = np.array(tdata['DX_bl'])
-    Y = np.array([Resulbinarizer(label) for label in Y])
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
+    Y = np.array([ResulbinarizerCN(label) for label in Y])
 
     X = preprocessing.scale(X)
 
@@ -525,7 +550,7 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
     # convert integers to dummy variables (i.e. one hot encoded)
     dummy_Y = np_utils.to_categorical(encoded_Y)
 
-    clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=0)
+    clf = KerasClassifier(build_fn=baseline_model, epochs=50, batch_size=5, verbose=1)
     # clf = baseline_model()
 
     # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
@@ -570,7 +595,7 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
 
 
 
-def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5", input_data="../../results/uploads/upload.csv"):
+def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5", input_data="../test/TADPOLE_test.csv"):
 
     predict_csv = GetModelDataCSV(input_data)
     # return model_dp
@@ -578,8 +603,8 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc=
     predict_csv = SplitClassData(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
-    predict_data = np.array(split_classes.drop(['DX_bl'], 1))
-    predict_lbl = np.array(split_classes['DX_bl'])
+    predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
+    predict_lbl = np.array(split_classes['DXCHANGE'])
 
     predict_data = preprocessing.scale(predict_data)
 
@@ -641,20 +666,314 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc=
 
     prediction = clf.predict(predict_data)
     # for pred in prediction:
-    prediction = [0 if pred[0] > pred[1] else 1 for pred in prediction]
+    prediction = [np.argmax(pred) for pred in prediction]
     probability = clf.predict_proba(predict_data)
     # print "**Prediction**", pred
     # print "**probability**", probability
 
-    results = predict_csv[['RID', 'DX_bl']].copy()
-    results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+    results = predict_csv[['RID', 'DXCHANGE']].copy()
+    results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
+
+    scores = accuracy_score(results['DXCHANGE'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
+    print conf_mat
+
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
-    # results.to_csv(r"/trunk/results/svmresults.csv",index=False)
+    # results.to_csv(r"../../results/kerasresults.csv",index=False)
 
     return results
 
     # results.to_csv(r"/trunk/results/keras2results.csv",index=False)
+
+def keras_trainCN(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5"):
+
+    # fix random seed for reproducibility
+    seed = 7
+    np.random.seed(seed)
+
+    model_data = GetModelDataCSV(src)
+    split_classes = SplitClassDataCN(indata=model_data, file=False)
+    tdata = TransformData(split_classes)
+    # original_X_cp = pd.DataFrame.copy(tdata)
+
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
+    Y = np.array([ResulbinarizerCN(label) for label in Y])
+
+    X = preprocessing.scale(X)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(Y)
+    encoded_Y = encoder.transform(Y)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
+    # clf = baseline_model()
+
+    # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
+
+    # results = cross_val_score(clf, X, dummy_Y, cv=kfold)
+    # print("Result: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+
+    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
+
+    # filepath = "../trained_model/keras/kerasmodel2.h5"
+    # checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
+    # callbacks_list = [checkpoint]
+
+    clf.fit(X_train, Y_train) # , callbacks=callbacks_list)
+
+    scores = clf.model.evaluate(X_train, Y_train, verbose=0)
+    print("%s: %.2f%%" % (clf.model.metrics_names[1], scores[1]*100))
+
+    test_score = clf.score(X_test, Y_test)
+    test_predict = clf.predict(X_test)
+
+    print "keras test_score:", test_score
+    print "keras test_predict:", test_predict
+
+    # serialize model to YAML
+    model_yaml = clf.model.to_yaml()
+    with open(model_loc, "w") as yaml_file:
+        yaml_file.write(model_yaml)
+    # serialize weights to HDF5
+    clf.model.save_weights(weights_loc)
+    print("Saved model to disk")
+
+    '''
+    # saving model
+    model_yaml = clf.model.to_yaml()
+    # open(model_loc, 'w').write(json_model)
+    with open("model.yaml", "w") as yaml_file:
+        yaml_file.write(model_yaml)
+    # saving weights
+    clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
+    '''
+
+
+
+def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", input_data="../test/TADPOLE_test_MCI.csv"):
+
+    predict_csv = GetModelDataCSV(input_data)
+    # return model_dp
+
+    predict_csv = SplitClassDataCN(indata=predict_csv, file=False)
+    split_classes = TransformData(predict_csv)
+
+    predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
+    predict_lbl = np.array(split_classes['DXCHANGE'])
+
+    predict_data = preprocessing.scale(predict_data)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(predict_lbl)
+    encoded_Y = encoder.transform(predict_lbl)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    # clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
+
+    # load YAML and create model
+    yaml_file = open(model_loc, 'r')
+    loaded_model_yaml = yaml_file.read()
+    yaml_file.close()
+    clf = model_from_yaml(loaded_model_yaml)
+    # load weights into new model
+    clf.load_weights(weights_loc)
+    print("Loaded model from disk")
+
+    # evaluate loaded model on test data
+    clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    score = clf.evaluate(predict_data, dummy_Y, verbose=0)
+    print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
+
+    prediction = clf.predict(predict_data)
+    # for pred in prediction:
+    prediction = [np.argmax(pred) for pred in prediction]
+    probability = clf.predict_proba(predict_data)
+    # print "**Prediction**", pred
+    # print "**probability**", probability
+
+    results = predict_csv[['RID', 'DXCHANGE']].copy()
+    results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
+    results['MONTHSAD'] = [None] * len(results['results'])
+
+    list_indexes = []
+    for i in range(len(results['results'])):
+        if results['results'][i] == 5:
+            list_indexes.append(i)
+            print "i:", i
+
+    print "len:", len(list_indexes)
+    print len(results['results'])
+    extra_test_cases = []
+    y_pred = []
+    for i in list_indexes:
+        extra_test_cases.append(predict_csv.values.tolist()[i])
+
+    print "Type:", type(extra_test_cases)
+    extra_pd = pd.DataFrame(extra_test_cases, columns=predict_csv.columns.tolist())
+
+    time_results = keras_test_time(input_data=extra_pd, model_loc='src/trained_model/keras/kerasmodel2time.yaml', weights_loc='src/trained_model/keras/kerasmodel2time.h5')
+    # print results
+
+    index = 0
+    time_results_class = time_results['results'].values.tolist()
+    for index2 in range(len(list_indexes)):
+        if results['results'][index2] == 5:
+            results['MONTHSAD'][index2] = time_results_class[index]
+            index+=1
+
+    print results
+    print results.values.tolist()
+    '''
+    scores = accuracy_score(results['DXCHANGE'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
+    print conf_mat
+    '''
+
+    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
+
+    # results.to_csv(r"../../results/kerasresults.csv",index=False)
+
+    return results
+
+def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc="../trained_model/keras/kerasmodel2time.h5"):
+
+    # fix random seed for reproducibility
+    seed = 7
+    np.random.seed(seed)
+
+    model_data = GetModelDataCSV2(src)
+    # split_classes = SplitClassDataTime(indata=model_data, file=False)
+    tdata = TransformData2(model_data)
+    # original_X_cp = pd.DataFrame.copy(tdata)
+
+    X = np.array(tdata.drop(['MONTHSAD'], 1))
+    Y = np.array(tdata['MONTHSAD'])
+    Y = np.array([ResulbinarizerTime(label) for label in Y])
+
+    X = preprocessing.scale(X)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(Y)
+    encoded_Y = encoder.transform(Y)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    clf = KerasClassifier(build_fn=baseline_model, epochs=20, batch_size=5, verbose=1)
+    # clf = baseline_model()
+
+    # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
+
+    # results = cross_val_score(clf, X, dummy_Y, cv=kfold)
+    # print("Result: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+
+    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
+
+    # filepath = "../trained_model/keras/kerasmodel2.h5"
+    # checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
+    # callbacks_list = [checkpoint]
+
+    clf.fit(X_train, Y_train) # , callbacks=callbacks_list)
+
+    scores = clf.model.evaluate(X_train, Y_train, verbose=0)
+    print("%s: %.2f%%" % (clf.model.metrics_names[1], scores[1]*100))
+
+    test_score = clf.score(X_test, Y_test)
+    test_predict = clf.predict(X_test)
+
+    print "keras test_score:", test_score
+    print "keras test_predict:", test_predict
+
+    # serialize model to YAML
+    model_yaml = clf.model.to_yaml()
+    with open(model_loc, "w") as yaml_file:
+        yaml_file.write(model_yaml)
+    # serialize weights to HDF5
+    clf.model.save_weights(weights_loc)
+    print("Saved model to disk")
+
+    '''
+    # saving model
+    model_yaml = clf.model.to_yaml()
+    # open(model_loc, 'w').write(json_model)
+    with open("model.yaml", "w") as yaml_file:
+        yaml_file.write(model_yaml)
+    # saving weights
+    clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
+    '''
+
+
+
+def keras_test_time(model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc="../trained_model/keras/kerasmodel2time.h5", input_data="../test/TADPOLE_test_time.csv"):
+
+    # predict_csv = GetModelDataCSV2(input_data) # com1
+    # return model_dp
+
+    # predict_csv = SplitClassDataCN(indata=predict_csv, file=False)
+    split_classes = TransformData2(input_data)   # com1
+
+    predict_data = np.array(split_classes) # com1
+    # predict_lbl = np.array(pred_y)    # split_classes['MONTHSAD']) # com1
+    predict_data = preprocessing.scale(predict_data)
+
+    '''
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(predict_lbl)
+    encoded_Y = encoder.transform(predict_lbl)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+    '''
+    # clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
+
+    # load YAML and create model
+    yaml_file = open(model_loc, 'r')
+    loaded_model_yaml = yaml_file.read()
+    yaml_file.close()
+    clf = model_from_yaml(loaded_model_yaml)
+    # load weights into new model
+    clf.load_weights(weights_loc)
+    print("Loaded model from disk")
+
+    # evaluate loaded model on test data
+    clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    # score = clf.evaluate(predict_data, dummy_Y, verbose=0)
+    # print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
+
+    prediction = clf.predict(predict_data)
+    # for pred in prediction:
+    prediction = [np.argmax(pred) for pred in prediction]
+    probability = clf.predict_proba(predict_data)
+    # print "**Prediction**", pred
+    # print "**probability**", probability
+
+    results = input_data[['RID']].copy()
+    results['results'] = [ResulUnbinarizerTime(pred) for pred in prediction]
+
+    '''
+    scores = accuracy_score(results['MONTHSAD'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['MONTHSAD'], results['results'])
+    print conf_mat
+    '''
+
+    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
+
+    # results.to_csv(r"../../results/kerastimeresults.csv",index=False)
+
+    return results
 
 def build_by_loading():
     model = load_model('../trained_model/keras/kerasmodel2.h5')
@@ -678,7 +997,7 @@ def baseline_model():
     model.add(Dense(32, activation='tanh'))
     model.add(Dense(32, activation='relu'))
     model.add(Dense(16, activation='tanh'))
-    model.add(Dense(2, activation='softmax'))
+    model.add(Dense(4, activation='softmax'))
     # Compile model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
@@ -728,40 +1047,128 @@ def rfc_results():
 def TransformData(data):
     # TODO: remove print
     # print ('Data train data shape:', data.shape)
-    # data = data.drop(columns=['DX_bl'])
+    data = data.drop(columns=['DX_bl'])
     data = data.drop(columns=['DX'])
     data = data.drop(columns=['RID'])
     data = data.drop(columns=['EXAMDATE'])
+    if 'PTGENDER' in data:
+        data = data.drop(columns=['PTGENDER'])
+    if 'MONTHSAD' in data:
+        data = data.drop(columns=['MONTHSAD'])
     # transformed = GenderToInt(data)
     transformed = data.convert_objects(convert_numeric=True)
     transformed = nan_padding(transformed)
+    # transformed = transformed.fillna(transformed.mean())
 
     # print transformed.dtypes
 
     return transformed
 
+def TransformData2(data):
+    # TODO: remove print
+    # print ('Data train data shape:', data.shape)
+    data = data.drop(columns=['DX_bl'])
+    data = data.drop(columns=['DX'])
+    data = data.drop(columns=['RID'])
+    data = data.drop(columns=['EXAMDATE'])
+    data = data.drop(columns=['DXCHANGE'])
+    if 'PTGENDER' in data:
+        data = data.drop(columns=['PTGENDER'])
+    # transformed = GenderToInt(data)
+    transformed = data.convert_objects(convert_numeric=True)
+    transformed = nan_padding(transformed)
+    # transformed = transformed.fillna(transformed.mean())
+
+    # print transformed.dtypes
+    return transformed
+
 def ResulUnbinarizer(val):
     if val == 0:
-        return "AD"
+        return 1
     elif val == 1:
-        return "CN"
+        return 2
     else:
-        return "MCI"
+        return 3
 
 def Resulbinarizer(val):
-    if val == 'AD':
+    if val == 1:
         return 0
-    elif val == 'CN':
+    elif val == 4:
         return 1
     else:
         return 2
+
+def ResulUnbinarizerCN(val):
+    if val == 0:
+        return 1
+    elif val == 1:
+        return 2
+    elif val == 2:
+        return 3
+    else:
+        return 5
+
+def ResulbinarizerCN(val):
+    if val == 1:
+        return 0
+    elif val == 2:
+        return 1
+    elif val == 3:
+        return 2
+    else:
+        return 5
+
+def ResulUnbinarizerTime(val):
+    if val == 0:
+        return 0
+    elif val == 1:
+        return 1
+    elif val == 2:
+        return 2
+    else:
+        return 3
+
+def ResulbinarizerTime(val):
+    if val == 0:
+        return 0
+    elif val == 1:
+        return 1
+    elif val == 2:
+        return 2
+    else:
+        return 3
 
 # if any of the fields in the top line are changed in the list below
 # change the value within nan_padding() function for the relevant fields
 # starting positions
 def GetSetRelevantFields():
     return  [
-            'RID','DX_bl','DX','EXAMDATE',
+            'RID','DX_bl','DX','EXAMDATE','DXCHANGE',
+            'MMSE_bl',
+            'CDRSB',
+            'ADAS13',
+            'ADAS11',
+            'RAVLT_immediate',
+            'MMSE',
+            'APOE4',
+            'LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16',
+            'ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
+            'ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
+            'Hippocampus',
+            'ST82TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+            'ST39TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+            'ST82TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+            'ST83CV_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+            'ST30SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
+            'ST109TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
+            'AV45',
+            'WholeBrain',
+            'LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16',
+            ]
+
+def GetSetRelevantFieldsTime():
+    return  [
+            'RID','DX_bl','DX','EXAMDATE','DXCHANGE', 'MONTHSAD',
             'MMSE_bl',
             'CDRSB',
             'ADAS13',
@@ -786,7 +1193,7 @@ def GetSetRelevantFields():
 
 def GetAllRelevantFields():
     return  [
-            'RID','DX_bl','DX','EXAMDATE',
+            'RID','DX_bl','DX','EXAMDATE', 'DXCHANGE',
             'MMSE', 'MMSE_bl', 'ADAS11', 'ADAS13','CDRSB', 'RAVLT_immediate',
             'Hippocampus','WholeBrain','Entorhinal', 'MidTemp',
             'FDG','AV45',
@@ -799,22 +1206,31 @@ def GetAllRelevantFields():
             'ST113CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','ST54CV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             'ST39TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16','ST39TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
             'ST39SA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
-            'ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','RIGHT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16','RIGHT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16','RIGHT_HIPPOCAMPUS_UCBERKELEYAV1451_10_17_16','RIGHT_HIPPOCAMPUS_SIZE_UCBERKELEYAV1451_10_17_16',
-            'ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16','LEFT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16','LEFT_HIPPOCAMPUS_UCBERKELEYAV1451_10_17_16','LEFT_HIPPOCAMPUS_SIZE_UCBERKELEYAV1451_10_17_16',
+            'ST88SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','RIGHT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16','RIGHT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16',
+            'ST29SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','LEFT_HIPPOCAMPUS_UCBERKELEYAV45_10_17_16','LEFT_HIPPOCAMPUS_SIZE_UCBERKELEYAV45_10_17_16',
             'ST89SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             'ST30SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             'ST130TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','ST130TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             'ST82TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16','ST82TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16',
-            'ST12SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16','LEFT_AMYGDALA_SIZE_UCBERKELEYAV45_10_17_16','LEFT_AMYGDALA_UCBERKELEYAV1451_10_17_16','LEFT_AMYGDALA_SIZE_UCBERKELEYAV1451_10_17_16',
+            'ST12SV_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','LEFT_AMYGDALA_UCBERKELEYAV45_10_17_16','LEFT_AMYGDALA_SIZE_UCBERKELEYAV45_10_17_16',
             'ST40TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','ST40TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             'ST117SA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             'ST109TA_UCSFFSX_11_02_15_UCSFFSX51_08_01_16','ST109TS_UCSFFSX_11_02_15_UCSFFSX51_08_01_16','ST109TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','ST109TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             'ST110TA_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16','ST110TS_UCSFFSL_02_01_16_UCSFFSL51ALL_08_01_16',
             ]
+'''
+RIGHT_HIPPOCAMPUS_UCBERKELEYAV1451_10_17_16
+RIGHT_HIPPOCAMPUS_SIZE_UCBERKELEYAV1451_10_17_16
+LEFT_HIPPOCAMPUS_UCBERKELEYAV1451_10_17_16
+LEFT_HIPPOCAMPUS_SIZE_UCBERKELEYAV1451_10_17_16
+LEFT_AMYGDALA_UCBERKELEYAV1451_10_17_16
+LEFT_AMYGDALA_SIZE_UCBERKELEYAV1451_10_17_16
+
+'''
 
 # getting cannot convert string to float errors
 def nan_padding(data):
-    for column in GetSetRelevantFields()[4:]:
+    for column in data.columns:
         imputer=Imputer()
         data[column]=imputer.fit_transform(data[column].values.reshape(-1,1))
     return data
@@ -833,22 +1249,66 @@ def GetModelDataCSV(indata):
 
     return model_dp
 
-def SplitClassData(indata=r"/trunk/src/train/TADPOLE_D1.csv", file=True):
+def GetModelDataCSV2(indata):
+    # load data (low memory: supress memory warning)
+    file_dp = pd.read_csv(indata, low_memory=False)
+
+    model_dp = file_dp[GetSetRelevantFieldsTime()]
+
+    return model_dp
+
+def SplitClassData(indata=r"/trunk/src/train/TADPOLE_train.csv", file=True):
 
     if file:
         tadpole_dp = pd.read_csv(indata, low_memory=False)
     else:
         tadpole_dp = indata
 
-    cn_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "CN"]
-    ad_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "AD"]
-    mci_data = tadpole_dp.loc[tadpole_dp['DX_bl'] == "MCI"]
+    cn_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 1]
+    mci_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 2]
+    ad_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 3]
     # print mci_data.head()
-    # c_data = pd.concat([ad_data,cn_data, mci_data])
-    c_data = pd.concat([ad_data,cn_data])
+    c_data = pd.concat([ad_data,cn_data, mci_data])
+    #c_data = pd.concat([ad_data,cn_data])
 
     print ('Total data shape:', tadpole_dp.shape)
     return c_data
+    # return tadpole_dp
+
+def SplitClassDataMCI(indata=r"/trunk/src/train/TADPOLE_train.csv", file=True):
+
+    if file:
+        tadpole_dp = pd.read_csv(indata, low_memory=False)
+    else:
+        tadpole_dp = indata
+
+    mci_mci_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 2]
+    mci_ad_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 5]
+
+    # print mci_data.head()
+    c_data = pd.concat([ad_data,cn_data, mci_data])
+    #c_data = pd.concat([ad_data,cn_data])
+
+    print ('Total data shape:', tadpole_dp.shape)
+    return c_data
+    # return tadpole_dp
+
+def SplitClassDataCN(indata=r"/trunk/src/train/TADPOLE_train.csv", file=True):
+
+    if file:
+        tadpole_dp = pd.read_csv(indata, low_memory=False)
+    else:
+        tadpole_dp = indata
+
+    # cn_mci_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 3]
+    # cn_cn_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 5]
+    # cn_ad_data = tadpole_dp.loc[tadpole_dp['DXCHANGE'] == 6]
+    # print mci_data.head()
+    # c_data = pd.concat([cn_cn_data,cn_mci_data])
+    # c_data = pd.concat([cn_mci_data,cn_ad_data])
+
+    print ('Total data shape:', tadpole_dp.shape)
+    return tadpole_dp
     # return tadpole_dp
 
 if __name__ == "__main__":
@@ -859,15 +1319,18 @@ if __name__ == "__main__":
     # svm_predict()
 
     # kmeans_train()
-    kmeans_predict()
+    # kmeans_predict()
 
     # mean_shift_train()
 
     # TrainModel()
     # TestModel()
 
-    # keras_train()
-    # keras_test()
+    # keras_trainCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", src=r"../train/TADPOLE_train_MCI.csv")
+    keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", input_data=r"../test/TADPOLE_test_MCI.csv")
+
+    # keras_train_time()
+    # keras_test_time()
 
     # random_forest_regressor()
     # rfc_results()

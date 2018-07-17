@@ -102,14 +102,22 @@ def AlzhetectPage():
        # return model_dp
        # print io.StringIO(unicode(in_file)).getvalue()
 
-       result_cols = ['RID', 'DX', 'Prediction', 'Prediction Probability']
+       kmeans_pred = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file))
+       knn_pred = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file))
+       svm_pred = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file))
+       keras_pred =  ml.keras_testCN(model_loc=appContext+"/src/trained_model/keras/kerasmodel2CN.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2CN.h5", input_data=deepcopy(in_file))
 
        result_vals = {}
-       result_vals['kmeans'] = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-       result_vals['knn'] = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-       result_vals['svm'] = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file)).values.tolist()
-       result_vals['keras'] = ml.keras_test(model_loc=appContext+"/src/trained_model/keras/kerasmodel2.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2.h5", input_data=deepcopy(in_file)).values.tolist()
+       result_vals['kmeans'] = kmeans_pred.values.tolist()
+       result_vals['knn'] = knn_pred.values.tolist()
+       result_vals['svm'] = svm_pred.values.tolist()
+       result_vals['keras'] = keras_pred.values.tolist()
 
+       result_cols = {}
+       result_cols['kmeans'] =kmeans_pred.columns.tolist()
+       result_cols['knn'] = knn_pred.columns.tolist()
+       result_cols['svm'] = svm_pred.columns.tolist()
+       result_cols['keras'] = keras_pred.columns.tolist()
 
        results['result_cols'] = result_cols
        results['result_vals'] = result_vals

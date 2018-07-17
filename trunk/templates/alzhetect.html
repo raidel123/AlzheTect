@@ -138,13 +138,18 @@
           {% if results|length > 0 %}
           {% for key, val in results.result_vals.items() %}
           <div class="w3-card w3-margin-top w3-center">
+            <h4 class="w3-margin">{{key}}<h4>
             <table id="{{key}}" class="display" style="width:100%;">
               <thead>
                 <tr>
-                  <th>RID</th>
+                  {% for v in results.result_cols[key] %}
+                  <th>{{v}}</th>
+                  <!--
                   <th>DX</th>
                   <th>Prediction</th>
                   <th>Prediction Probability</th>
+                  -->
+                  {% endfor %}
                 </tr>
               </thead>
               <tbody>
