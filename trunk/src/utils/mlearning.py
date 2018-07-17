@@ -820,7 +820,7 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_
     print "Type:", type(extra_test_cases)
     extra_pd = pd.DataFrame(extra_test_cases, columns=predict_csv.columns.tolist())
 
-    time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc='src/trained_model/keras/kerasmodel2time.h5')
+    time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5')
     # print results
 
     index = 0
