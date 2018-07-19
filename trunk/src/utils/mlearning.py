@@ -845,7 +845,7 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_
 
     return results
 
-def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc="../trained_model/keras/kerasmodel2time.h5"):
+def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc="../trained_model/keras/kerasmodel4time.h5"):
 
     # fix random seed for reproducibility
     seed = 7
@@ -914,7 +914,7 @@ def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../train
 
 
 
-def keras_test_time(model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc="../trained_model/keras/kerasmodel2time.h5", input_data="../test/TADPOLE_test_time.csv"):
+def keras_test_time(model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc="../trained_model/keras/kerasmodel4time.h5", input_data="../test/TADPOLE_test_time.csv"):
 
     # predict_csv = GetModelDataCSV2(input_data) # com1
     # return model_dp
@@ -1325,11 +1325,11 @@ if __name__ == "__main__":
     # TrainModel()
     # TestModel()
 
-    keras_trainCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", src=r"../train/TADPOLE_train_MCI.csv")
-    keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", input_data=r"../test/TADPOLE_test_MCI.csv")
+    keras_trainCN(model_loc='../trained_model/keras/kerasmodel4.yaml', weights_loc="../trained_model/keras/kerasmodel4.h5", src=r"../train/TADPOLE_train_MCI.csv")
+    keras_testCN(model_loc='../trained_model/keras/kerasmodel4.yaml', weights_loc="../trained_model/keras/kerasmodel4.h5", input_data=r"../test/TADPOLE_test_MCI.csv")
 
     keras_train_time()
-    keras_test_time()
+    # keras_test_time()
 
     # random_forest_regressor()
     # rfc_results()
