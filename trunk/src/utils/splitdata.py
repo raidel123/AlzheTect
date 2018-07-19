@@ -17,6 +17,8 @@ else:
 
 context = '/'.join(context[:context.index('AlzheTect') + 1])
 
+'''
+
 def SplitTrainTestData(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv", trainfile=context + r"/trunk/src/train/TADPOLE_D1.csv", testfile=context + r"/trunk/src/test/TADPOLE_D2.csv"):
 
     # input data from tadpole mixed file and separate into training and testing
@@ -36,7 +38,8 @@ def SplitTrainTestData(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv",
     print ('Test data shape:', d2_data.shape)
 
     return d1_data, d2_data
-
+'''
+'''
 def SplitTrainTestData2(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv", trainfile=context + r"/trunk/src/train/TADPOLE_train.csv", testfile=context + r"/trunk/src/test/TADPOLE_test.csv"):
 
     # input data from tadpole mixed file and separate into training and testing
@@ -84,7 +87,8 @@ def SplitTrainTestData2(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv"
     d2_data.to_csv(testfile, encoding='utf-8', index=False)
 
     # final_data.to_csv(trainfile, encoding='utf-8', index=False)
-
+'''
+'''
 def SplitTrainTestData3(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv", trainfile=context + r"/trunk/src/train/TADPOLE_train.csv", testfile=context + r"/trunk/src/test/TADPOLE_test.csv"):
 
     # input data from tadpole mixed file and separate into training and testing
@@ -99,11 +103,9 @@ def SplitTrainTestData3(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv"
     for id in rids:
         data[id] = tadpole_dp.loc[tadpole_dp['RID'] == id]
 
-    '''
-    for key, value in data.iteritems():
-        print "Key:", key
-        print value['DXCHANGE'], value['EXAMDATE']
-    '''
+    # for key, value in data.iteritems():
+        # print "Key:", key
+        # print value['DXCHANGE'], value['EXAMDATE']
 
     # print len(data)
     # print data.keys()
@@ -173,6 +175,7 @@ def SplitTrainTestData3(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv"
     d2_data.to_csv(testfile, encoding='utf-8', index=False)
 
     # final_data.to_csv(trainfile, encoding='utf-8', index=False)
+'''
 
 def SplitTrainTestData4(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv", trainfile=context + r"/trunk/src/train/TADPOLE_train_MCI.csv", testfile=context + r"/trunk/src/test/TADPOLE_test_MCI.csv"):
 
@@ -448,6 +451,7 @@ def Months_to_Classification(months):
     else:
         return 3
 
+'''
 def SplitDXData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv", file=True):
 
     if file:
@@ -500,14 +504,21 @@ def SplitClassData2(indata=context + r"/trunk/src/train/TADPOLE_train.csv", file
 
     return c_data
 
+'''
+
 def ProcessForecast(indata=context + r"/trunk/src/train/TADPOLE_train_time.csv"):
 
     user_longitudinal_data = {}
     c_data = tadpole_dp = pd.read_csv(indata, low_memory=False)
     # print c_data.head()
 
-    for i in range(1, 7):
-        print c_data.loc[tadpole_dp['DXCHANGE'] == i].shape
+    print "head", c_data.shape
+    for i in range(-1, 10):
+        print i, c_data.loc[tadpole_dp['MONTHSAD'] == i].shape
+
+    print c_data.loc[tadpole_dp['MONTHSAD'] == np.nan].shape
+
+    print c_data.RID.unique().shape
 
     for index, row in c_data.iterrows():
         if row['RID'] in user_longitudinal_data:
@@ -515,7 +526,7 @@ def ProcessForecast(indata=context + r"/trunk/src/train/TADPOLE_train_time.csv")
         else:
             user_longitudinal_data[row['RID']] = [row]
 
-    print len(user_longitudinal_data)
+     # print len(user_longitudinal_data)
 
     '''
     for key, value in user_longitudinal_data.iteritems():
@@ -528,7 +539,7 @@ def ProcessForecast(indata=context + r"/trunk/src/train/TADPOLE_train_time.csv")
 
 if __name__ == "__main__":
 
-    SplitTrainTestData5()
+    # SplitTrainTestData5()
     ProcessForecast()
 
     # train_cn_data, train_ad_data, train_mci_data = SplitDXData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv")

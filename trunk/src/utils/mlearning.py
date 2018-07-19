@@ -40,7 +40,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import ShuffleSplit
 from sklearn.metrics import r2_score
 from sklearn.metrics import confusion_matrix
@@ -107,7 +107,7 @@ def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn
 
     # knn_predict()
 
-def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data="../test/TADPOLE_test.csv", output_file="../../results/uploads/results.csv", file=True):
+def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data="../test/TADPOLE_test.csv"):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
@@ -142,7 +142,7 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
 
     # print results
 
-    # results.to_csv(output_file,index=False)
+    # results.to_csv("../../results/uploads/results.csv",index=False)
 
     K.clear_session()
 
@@ -526,6 +526,7 @@ def mean_shift_predict(model_loc='../trained_model/means_shift/means_shiftmodel2
 
 # ------------------------ DNN Classifier ---------------------------
 
+'''
 def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5"):
 
     # fix random seed for reproducibility
@@ -583,18 +584,17 @@ def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/k
     clf.model.save_weights(weights_loc)
     print("Saved model to disk")
 
-    '''
+
     # saving model
-    model_yaml = clf.model.to_yaml()
+    # model_yaml = clf.model.to_yaml()
     # open(model_loc, 'w').write(json_model)
-    with open("model.yaml", "w") as yaml_file:
-        yaml_file.write(model_yaml)
+    # with open("model.yaml", "w") as yaml_file:
+        # yaml_file.write(model_yaml)
     # saving weights
-    clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
-    '''
+    # clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
+'''
 
-
-
+'''
 def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5", input_data="../test/TADPOLE_test.csv"):
 
     predict_csv = GetModelDataCSV(input_data)
@@ -617,18 +617,18 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc=
 
     # clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
 
-    '''
+
     # loading model
-    yaml_file = open('model.yaml', 'r')
-    loaded_model_yaml = yaml_file.read()
-    yaml_file.close()
+    # yaml_file = open('model.yaml', 'r')
+    # loaded_model_yaml = yaml_file.read()
+    # yaml_file.close()
     # clf = model_from_json(open(model_loc).read())
 
-    clf = model_from_yaml(loaded_model_yaml)
+    # clf = model_from_yaml(loaded_model_yaml)
 
-    clf.load_weights("../trained_model/keras/kerasmodel2.h5")
-    clf.compile(loss='categorical_crossentropy', optimizer='adam')
-    '''
+    # clf.load_weights("../trained_model/keras/kerasmodel2.h5")
+    # clf.compile(loss='categorical_crossentropy', optimizer='adam')
+
 
     # load YAML and create model
     yaml_file = open(model_loc, 'r')
@@ -687,6 +687,7 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc=
     return results
 
     # results.to_csv(r"/trunk/results/keras2results.csv",index=False)
+'''
 
 def keras_trainCN(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5"):
 
@@ -754,8 +755,6 @@ def keras_trainCN(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model
     # saving weights
     clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
     '''
-
-
 
 def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", input_data="../test/TADPOLE_test_MCI.csv", appcontext=""):
 
@@ -987,35 +986,35 @@ def baseline_model():
     #model.add(Dense(128, activation='relu'))
     #model.add(Dense(128, activation='tanh'))
     #model.add(Dense(128, activation='relu'))
-    model.add(Dense(128, activation='relu'))
-    model.add(Dense(128, activation='relu'))
-    model.add(Dense(128, activation='relu'))
-    model.add(Dense(64, activation='relu'))
+    model.add(Dense(2056, activation='relu'))
+    model.add(Dense(2056, activation='relu'))
+    model.add(Dense(2056, activation='relu'))
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dense(1024, activation='tanh'))
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dense(512, activation='relu'))
+    model.add(Dense(512, activation='tanh'))
+    model.add(Dense(512, activation='relu'))
     model.add(Dense(64, activation='tanh'))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(32, activation='tanh'))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(16, activation='tanh'))
     model.add(Dense(4, activation='softmax'))
     # Compile model
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
-def random_forest_regressor(src=r"../train/TADPOLE_train.csv"):
+def random_forest_regressor(src=r"../train/TADPOLE_train_MCI.csv"):
     model_data = GetModelDataCSV(src)
-    split_classes = SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassDataCN(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
-    X = np.array(tdata.drop(['DX_bl'], 1))
-    Y = np.array(tdata['DX_bl'])
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
     Y = np.array([Resulbinarizer(label) for label in Y])
 
     X = preprocessing.scale(X)
 
-    names = list(tdata.drop(['DX_bl'], 1).columns.values)
+    names = list(tdata.drop(['DXCHANGE'], 1).columns.values)
 
-    rf = RandomForestRegressor(n_estimators=20, max_features=20, n_jobs=-1, verbose=0)
+    rf = RandomForestClassifier(n_estimators=20, max_features=20, n_jobs=-1, verbose=0)
     scores = defaultdict(list)
 
     #crossvalidate the scores on a number of different random splits of the data
@@ -1033,12 +1032,12 @@ def random_forest_regressor(src=r"../train/TADPOLE_train.csv"):
     for item in sorted([(round(np.mean(score), 8), feat) for feat, score in scores.items()], reverse=True)[:20]:
         print item
 
-    json.dump(scores, open('../trained_model/random_forest/rfr_scores.json', 'w'))
+    json.dump(scores, open('../trained_model/random_forest/rfr_scores2.json', 'w'))
 
 
 
 def rfc_results():
-    dict_load = json.load(open('../trained_model/random_forest/rfr_scores.json', 'r'))
+    dict_load = json.load(open('../trained_model/random_forest/rfr_scores2.json', 'r'))
     for item in sorted([(round(np.mean(dict_load), 8), feat) for feat, dict_load in dict_load.items()], reverse=True)[:20]:
         print item
 
@@ -1326,11 +1325,11 @@ if __name__ == "__main__":
     # TrainModel()
     # TestModel()
 
-    # keras_trainCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", src=r"../train/TADPOLE_train_MCI.csv")
+    keras_trainCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", src=r"../train/TADPOLE_train_MCI.csv")
     keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", input_data=r"../test/TADPOLE_test_MCI.csv")
 
-    # keras_train_time()
-    # keras_test_time()
+    keras_train_time()
+    keras_test_time()
 
     # random_forest_regressor()
     # rfc_results()
