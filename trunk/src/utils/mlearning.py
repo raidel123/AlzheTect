@@ -9,9 +9,9 @@ import pickle
 import json
 import warnings
 import tensorflow as tf
-import plotly.plotly as py
-py.sign_in('raidel123', 'bASu5tBeMP3WTX69vm9S')
-import plotly.graph_objs as go
+# import plotly.plotly as py
+# py.sign_in('raidel123', 'bASu5tBeMP3WTX69vm9S')
+# import plotly.graph_objs as go
 import seaborn as sns
 warnings.filterwarnings("ignore")
 
