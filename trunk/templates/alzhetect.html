@@ -13,6 +13,7 @@
     <hr>
   </div>
 
+  <!--
   <section id="todo">
     <div class="container">
       <div class="row">
@@ -30,6 +31,7 @@
       </div>
     </div>
   </section>
+  -->
 
   <section id="accuracy_meter">
     <div class="container">
@@ -60,8 +62,9 @@
       </div>
       <div class="row">
         <div class="col-lg-11 col-md-11">
-          <h5>Input Patient Information</h5>
+          <h5>Input Patients Information</h5>
 
+          <!--
           <div class="row col-lg-8 mx-auto w3-margin-top">
             <label class="radio-inline mx-auto">
               <input id="input_values" value="input_values" class="w3-margin" type="radio" name="input_type" checked="checked" onchange="changeInput(this, 'raw_input')">Input Values
@@ -70,9 +73,10 @@
               <input id="upload_csv" value="upload_csv" class="w3-margin" type="radio" name="input_type" onchange="changeInput(this, 'file_input')">Upload CSV
             </label>
           </div>
+          -->
 
-          <div id="file_input" class="row col-lg-11 col-md-11 margin-top64" style="display:none;">
-            <p>Upload CSV File To Classify:</p>
+          <div id="file_input" class="row col-lg-11 col-md-11 margin-top64">
+            <p>Upload CSV File:</p>
             <div class="w3-card w3-margin-top">
               <form action = "/alzhetect/" method = "POST" enctype = "multipart/form-data">
                 <input type = "file" name = "file" />
@@ -82,6 +86,7 @@
             </div>
           </div>
 
+          <!--
           <div id="raw_input" class="margin-top64 col-lg-11 col-md-11">
             <p>Manually Input Information Below:<p>
             <div class='w3-card w3-margin-top'>
@@ -100,6 +105,8 @@
               </form>
             </div>
           </div>
+          -->
+
         </div>
       </div>
     </div>
@@ -137,8 +144,8 @@
 
           {% if results|length > 0 %}
           {% for key, val in results.result_vals.items() %}
-          <div class="w3-card w3-margin-top w3-center">
-            <h4 class="w3-margin">{{key}}<h4>
+          <div class="w3-margin-top w3-center">
+            <h4 class="w3-margin">{{key}}</h4>
             <table id="{{key}}" class="display" style="width:100%;">
               <thead>
                 <tr>

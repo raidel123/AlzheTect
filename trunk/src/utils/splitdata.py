@@ -400,17 +400,20 @@ def SplitTrainTestData5(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv"
                 prev_obj = [date_obj, value.loc[value['EXAMDATE'] == date], 2]
             elif prev_obj is not None and (row['DXCHANGE'] == 3 or row['DXCHANGE'] == 5):
                 difference = date_obj - prev_obj[0]
-                print date_obj, prev_obj[0]
+                #print date_obj, prev_obj[0]
 
-                print "Seconds:", difference.total_seconds()
-                print "Days", ((difference.total_seconds() /60)/60)/24
+                #print "Seconds:", difference.total_seconds()
+                #print "Days", ((difference.total_seconds() /60)/60)/24
                 # print "Years:", difference.years
                 # print "Months:", difference.months
                 # print "Days:", difference.days
                 MCI_AD_data.append(prev_obj[1])
                 MCI_AD_difference.append(abs(((((difference.total_seconds() /60)/60)/24)/365)*12))
+                # if(row['RID'] == 108):
+                    # print "Months:", abs(((((difference.total_seconds() /60)/60)/24)/365)*12)
+
                 break
-    print "len MCI_AD:", len(MCI_AD_data)
+    # print "len MCI_AD:", len(MCI_AD_data)
     MCI_AD_data = pd.concat(MCI_AD_data)
 
     MCI_AD_data['DXCHANGE'].replace([2], [5], inplace=True)
@@ -423,7 +426,7 @@ def SplitTrainTestData5(indata=context + r"/trunk/src/tadpole/TADPOLE_D1_D2.csv"
 
     final_data = final_data.sample(frac=1)
     # print final_data.head()
-    print pd.DataFrame(months_to_AD).describe()
+    # print pd.DataFrame(months_to_AD).describe()
     # print 'final data shape:', final_data.shape
     # print 'final data len:', len(final_data)
     # print ('Total data shape:', tadpole_dp.shape)
@@ -539,8 +542,8 @@ def ProcessForecast(indata=context + r"/trunk/src/train/TADPOLE_train_time.csv")
 
 if __name__ == "__main__":
 
-    # SplitTrainTestData5()
-    ProcessForecast()
+    SplitTrainTestData5()
+    # ProcessForecast()
 
     # train_cn_data, train_ad_data, train_mci_data = SplitDXData(indata=context + r"/trunk/src/train/TADPOLE_D1.csv")
     # test_cn_data, test_ad_data, test_mci_data = SplitDXData(indata=context + r"/trunk/src/test/TADPOLE_D2.csv")

@@ -1,6 +1,6 @@
-# import matplotlib
-# matplotlib.use('Agg')
-# import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import sys
 import os
 import pandas as pd
@@ -9,6 +9,10 @@ import pickle
 import json
 import warnings
 import tensorflow as tf
+import plotly.plotly as py
+py.sign_in('raidel123', 'bASu5tBeMP3WTX69vm9S')
+import plotly.graph_objs as go
+import seaborn as sns
 warnings.filterwarnings("ignore")
 
 # Build Neural Network
@@ -66,14 +70,14 @@ import plotresults as pr
 '''
 # ------------------------ K-Nearest Neighbors Classifier ---------------------------
 
-def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn/knnmodel2.pickle'):
+def knn_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model/knn/knnmodel4.pickle'):
     model_data = GetModelDataCSV(src)
-    split_classes = SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassDataCN(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
     X = np.array(tdata.drop(['DXCHANGE'], 1))
     Y = np.array(tdata['DXCHANGE'])
-    Y = np.array([Resulbinarizer(label) for label in Y])
+    Y = np.array([ResulbinarizerCN(label) for label in Y])
 
     X = preprocessing.scale(X)
 
@@ -107,7 +111,7 @@ def knn_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/knn
 
     # knn_predict()
 
-def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data="../test/TADPOLE_test.csv"):
+def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data="../test/TADPOLE_test_MCI.csv"):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
@@ -115,7 +119,7 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
     predict_csv = GetModelDataCSV(input_data)
     # return model_dp
 
-    predict_csv = SplitClassData(indata=predict_csv, file=False)
+    predict_csv = SplitClassDataCN(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
@@ -130,13 +134,30 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
 
 
     results = predict_csv[['RID', 'DXCHANGE']].copy()
-    results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+    results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
 
     scores = accuracy_score(results['DXCHANGE'], results['results'])
     print scores
 
     conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
     print conf_mat
+
+    '''
+    trace = go.Heatmap(z=conf_mat,
+                   x=['CN', 'MCI', 'AD', 'MCI-to-AD'],
+                   y=['CN', 'MCI', 'AD', 'MCI-to-AD'])
+    data=[trace]
+    py.plot(data, filename='knn-dx-heatmap')
+    '''
+
+    '''
+    fig2=plt.figure()
+    fig2.add_subplot(111)
+    sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.savefig('knn_heatmap_dx.png')
+    '''
 
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
@@ -159,14 +180,14 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel2.pickle', input_data=".
 
 # ------------------------ SVM Classifier ---------------------------
 
-def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm/svmmodel2.pickle'):
+def svm_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model/svm/svmmodel4.pickle'):
     model_data = GetModelDataCSV(src)
-    split_classes = SplitClassData(indata=model_data, file=False)
+    split_classes = SplitClassDataCN(indata=model_data, file=False)
     tdata = TransformData(split_classes)
 
     X = np.array(tdata.drop(['DXCHANGE'], 1))
     Y = np.array(tdata['DXCHANGE'])
-    Y = np.array([Resulbinarizer(label) for label in Y])
+    Y = np.array([ResulbinarizerCN(label) for label in Y])
 
     X = preprocessing.scale(X)
 
@@ -198,7 +219,7 @@ def svm_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/svm
 
     # svm_predict()
 
-def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data="../test/TADPOLE_test.csv"):
+def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data="../test/TADPOLE_test_MCI.csv"):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
@@ -206,7 +227,7 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data=".
     predict_csv = GetModelDataCSV(input_data)
     # return model_dp
 
-    predict_csv = SplitClassData(indata=predict_csv, file=False)
+    predict_csv = SplitClassDataCN(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
@@ -219,13 +240,22 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel2.pickle', input_data=".
     # print "**probability**", probability
 
     results = predict_csv[['RID', 'DXCHANGE']].copy()
-    results['results'] = [ResulUnbinarizer(pred) for pred in prediction]
+    results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
 
     scores = accuracy_score(results['DXCHANGE'], results['results'])
     print scores
 
     conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
     print conf_mat
+
+    '''
+    fig2=plt.figure()
+    fig2.add_subplot(111)
+    sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.savefig('svm-dx-heatmap.png')
+    '''
 
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
@@ -689,7 +719,7 @@ def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc=
     # results.to_csv(r"/trunk/results/keras2results.csv",index=False)
 '''
 
-def keras_trainCN(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5"):
+def keras_trainCN(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model/keras/kerasmodel4CN.yaml', weights_loc="../trained_model/keras/kerasmodel4CN.h5"):
 
     # fix random seed for reproducibility
     seed = 7
@@ -723,10 +753,6 @@ def keras_trainCN(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model
 
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
 
-    # filepath = "../trained_model/keras/kerasmodel2.h5"
-    # checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
-    # callbacks_list = [checkpoint]
-
     clf.fit(X_train, Y_train) # , callbacks=callbacks_list)
 
     scores = clf.model.evaluate(X_train, Y_train, verbose=0)
@@ -756,7 +782,7 @@ def keras_trainCN(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model
     clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
     '''
 
-def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", input_data="../test/TADPOLE_test_MCI.csv", appcontext=""):
+def keras_testCN(model_loc='../trained_model/keras/kerasmodel4CN.yaml', weights_loc="../trained_model/keras/kerasmodel4CN.h5", input_data="../test/TADPOLE_test_MCI.csv", appcontext=None):
 
     predict_csv = GetModelDataCSV(input_data)
     # return model_dp
@@ -803,14 +829,29 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_
     results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
     results['MONTHSAD'] = [None] * len(results['results'])
 
+    scores = accuracy_score(results['DXCHANGE'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
+    print conf_mat
+
+    '''
+    fig2=plt.figure()
+    fig2.add_subplot(111)
+    sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.savefig('keras-dx-heatmap.png')
+    '''
+
     list_indexes = []
     for i in range(len(results['results'])):
         if results['results'][i] == 5:
             list_indexes.append(i)
-            print "i:", i
+            # print "i:", i
 
-    print "len:", len(list_indexes)
-    print len(results['results'])
+    # print "len:", len(list_indexes)
+    # print len(results['results'])
     extra_test_cases = []
     y_pred = []
     for i in list_indexes:
@@ -819,12 +860,16 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_
     print "Type:", type(extra_test_cases)
     extra_pd = pd.DataFrame(extra_test_cases, columns=predict_csv.columns.tolist())
 
-    time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5')
+
+    if appcontext is None:
+        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc='../trained_model/keras/kerasmodel2time.h5', local=False)
+    else:
+        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5', local=False)
     # print results
 
     index = 0
     time_results_class = time_results['results'].values.tolist()
-    for index2 in range(len(list_indexes)):
+    for index2 in range(len(results['results'])):
         if results['results'][index2] == 5:
             results['MONTHSAD'][index2] = time_results_class[index]
             index+=1
@@ -845,7 +890,7 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_
 
     return results
 
-def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc="../trained_model/keras/kerasmodel2time.h5"):
+def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc="../trained_model/keras/kerasmodel4time.h5"):
 
     # fix random seed for reproducibility
     seed = 7
@@ -869,7 +914,7 @@ def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../train
     # convert integers to dummy variables (i.e. one hot encoded)
     dummy_Y = np_utils.to_categorical(encoded_Y)
 
-    clf = KerasClassifier(build_fn=baseline_model, epochs=20, batch_size=5, verbose=1)
+    clf = KerasClassifier(build_fn=baseline_model, epochs=50, batch_size=4, verbose=1)
     # clf = baseline_model()
 
     # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
@@ -912,15 +957,16 @@ def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../train
     clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
     '''
 
+def keras_test_time(model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc="../trained_model/keras/kerasmodel4time.h5", input_data="../test/TADPOLE_test_time.csv", local=True):
 
-
-def keras_test_time(model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc="../trained_model/keras/kerasmodel2time.h5", input_data="../test/TADPOLE_test_time.csv"):
-
-    # predict_csv = GetModelDataCSV2(input_data) # com1
-    # return model_dp
-
-    # predict_csv = SplitClassDataCN(indata=predict_csv, file=False)
-    split_classes = TransformData2(input_data)   # com1
+    if local:
+        predict_csv = GetModelDataCSV2(input_data) # com1
+        split_classes = TransformData2(predict_csv)   # com1
+        split_classes = split_classes.drop(columns=['MONTHSAD'])
+        original_pandas = predict_csv
+    else:
+        split_classes = TransformData2(input_data)   # com1
+        original_pandas = input_data
 
     predict_data = np.array(split_classes) # com1
     # predict_lbl = np.array(pred_y)    # split_classes['MONTHSAD']) # com1
@@ -957,8 +1003,20 @@ def keras_test_time(model_loc='../trained_model/keras/kerasmodel2time.yaml', wei
     # print "**Prediction**", pred
     # print "**probability**", probability
 
-    results = input_data[['RID']].copy()
-    results['results'] = [ResulUnbinarizerTime(pred) for pred in prediction]
+    if local:
+        results = original_pandas[['RID', 'MONTHSAD']].copy()
+        results['results'] = [ResulUnbinarizerTime(pred) for pred in prediction]
+
+
+        scores = accuracy_score(results['MONTHSAD'], results['results'])
+        print scores
+
+        conf_mat = confusion_matrix(results['MONTHSAD'], results['results'])
+        print conf_mat
+
+    else:
+        results = original_pandas[['RID']].copy()
+        results['results'] = [ResulUnbinarizerTime(pred) for pred in prediction]
 
     '''
     scores = accuracy_score(results['MONTHSAD'], results['results'])
@@ -971,6 +1029,84 @@ def keras_test_time(model_loc='../trained_model/keras/kerasmodel2time.yaml', wei
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
     # results.to_csv(r"../../results/kerastimeresults.csv",index=False)
+
+    print results
+
+    return results
+
+def keras_test_time2(model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc="../trained_model/keras/kerasmodel4time.h5", input_data="../test/TADPOLE_test_time.csv"):
+
+    predict_csv = GetModelDataCSV2(input_data) # com1
+    split_classes = TransformData2(predict_csv)   # com1
+    # split_classes = split_classes.drop(columns=['MONTHSAD'])
+    # pred_y = split_classes['MONTHSAD']
+
+    original_pandas = predict_csv
+
+    predict_data = np.array(split_classes.drop(columns=['MONTHSAD'])) # com1
+    predict_lbl = np.array(split_classes['MONTHSAD'])    # split_classes['MONTHSAD']) # com1
+
+    predict_data = preprocessing.scale(predict_data)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(predict_lbl)
+    encoded_Y = encoder.transform(predict_lbl)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    # clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
+
+    # load YAML and create model
+    yaml_file = open(model_loc, 'r')
+    loaded_model_yaml = yaml_file.read()
+    yaml_file.close()
+    clf = model_from_yaml(loaded_model_yaml)
+    # load weights into new model
+    clf.load_weights(weights_loc)
+    print("Loaded model from disk")
+
+    # evaluate loaded model on test data
+    clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    score = clf.evaluate(predict_data, dummy_Y, verbose=0)
+    print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
+
+    prediction = clf.predict(predict_data)
+    # for pred in prediction:
+    prediction = [np.argmax(pred) for pred in prediction]
+    probability = clf.predict_proba(predict_data)
+    # print "**Prediction**", pred
+    # print "**probability**", probability
+
+    results = original_pandas[['RID', 'MONTHSAD']].copy()
+    results['results'] = [ResulUnbinarizerTime(pred) for pred in prediction]
+
+    scores = accuracy_score(results['MONTHSAD'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['MONTHSAD'], results['results'])
+    print conf_mat
+
+    fig2=plt.figure()
+    fig2.add_subplot(111)
+    sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.savefig('keras-time-heatmap.png')
+
+    '''
+    scores = accuracy_score(results['MONTHSAD'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['MONTHSAD'], results['results'])
+    print conf_mat
+    '''
+
+    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
+
+    # results.to_csv(r"../../results/kerastimeresults.csv",index=False)
+
+    print results
 
     return results
 
@@ -1115,7 +1251,7 @@ def ResulbinarizerCN(val):
     elif val == 3:
         return 2
     else:
-        return 5
+        return 3
 
 def ResulUnbinarizerTime(val):
     if val == 0:
@@ -1312,10 +1448,10 @@ def SplitClassDataCN(indata=r"/trunk/src/train/TADPOLE_train.csv", file=True):
 
 if __name__ == "__main__":
     # knn_train()
-    # knn_predict()
+    knn_predict()
 
     # svm_train()
-    # svm_predict()
+    svm_predict()
 
     # kmeans_train()
     # kmeans_predict()
@@ -1325,11 +1461,12 @@ if __name__ == "__main__":
     # TrainModel()
     # TestModel()
 
-    # keras_trainCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", src=r"../train/TADPOLE_train_MCI.csv")
-    # keras_testCN(model_loc='../trained_model/keras/kerasmodel2CN.yaml', weights_loc="../trained_model/keras/kerasmodel2CN.h5", input_data=r"../test/TADPOLE_test_MCI.csv")
+    # keras_trainCN()
+    keras_testCN()
 
     # keras_train_time()
     # keras_test_time()
+    keras_test_time2()
 
-    random_forest_regressor()
-    rfc_results()
+    # random_forest_regressor()
+    # rfc_results()
