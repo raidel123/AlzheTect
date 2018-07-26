@@ -1050,9 +1050,12 @@ def xgboost_train(src=r"../train/TADPOLE_train_MCI.csv"):
 
     grid_mse = GridSearchCV(estimator = gbm, param_grid = gbm_param_grid, scoring = 'neg_mean_squared_error', cv = 5, verbose = 1)
 
-    # grid_mse.fit(X_train, y_train)
+    grid_mse.fit(X_train, y_train)
     print("Best parameters found: ",grid_mse.best_params_)
     print("Lowest RMSE found: ", np.sqrt(np.abs(grid_mse.best_score_)))
+
+    importances = gbm.get_fscore()
+
     '''
     scores = defaultdict(list)
 
@@ -1368,7 +1371,7 @@ if __name__ == "__main__":
     # keras_test_time()
     # keras_test_time2()
 
-    random_forest_regressor()
+    # random_forest_regressor()
     # rfc_results()
 
     xgboost_train()
