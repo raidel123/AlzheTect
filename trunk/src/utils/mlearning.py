@@ -13,6 +13,8 @@ import tensorflow as tf
 # py.sign_in('raidel123', 'bASu5tBeMP3WTX69vm9S')
 # import plotly.graph_objs as go
 import seaborn as sns
+import xgboost as xgb
+
 warnings.filterwarnings("ignore")
 
 # Build Neural Network
@@ -49,6 +51,8 @@ from sklearn.cross_validation import ShuffleSplit
 from sklearn.metrics import r2_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import mean_squared_error
 from collections import defaultdict
 
 '''
@@ -556,169 +560,6 @@ def mean_shift_predict(model_loc='../trained_model/means_shift/means_shiftmodel2
 
 # ------------------------ DNN Classifier ---------------------------
 
-'''
-def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5"):
-
-    # fix random seed for reproducibility
-    seed = 7
-    np.random.seed(seed)
-
-    model_data = GetModelDataCSV(src)
-    split_classes = SplitClassDataCN(indata=model_data, file=False)
-    tdata = TransformData(split_classes)
-    # original_X_cp = pd.DataFrame.copy(tdata)
-
-    X = np.array(tdata.drop(['DXCHANGE'], 1))
-    Y = np.array(tdata['DXCHANGE'])
-    Y = np.array([ResulbinarizerCN(label) for label in Y])
-
-    X = preprocessing.scale(X)
-
-    # encode class values as integers
-    encoder = LabelEncoder()
-    encoder.fit(Y)
-    encoded_Y = encoder.transform(Y)
-    # convert integers to dummy variables (i.e. one hot encoded)
-    dummy_Y = np_utils.to_categorical(encoded_Y)
-
-    clf = KerasClassifier(build_fn=baseline_model, epochs=50, batch_size=5, verbose=1)
-    # clf = baseline_model()
-
-    # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
-
-    # results = cross_val_score(clf, X, dummy_Y, cv=kfold)
-    # print("Result: %.2f (%.2f) MSE" % (results.mean(), results.std()))
-
-    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
-
-    # filepath = "../trained_model/keras/kerasmodel2.h5"
-    # checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
-    # callbacks_list = [checkpoint]
-
-    clf.fit(X_train, Y_train) # , callbacks=callbacks_list)
-
-    scores = clf.model.evaluate(X_train, Y_train, verbose=0)
-    print("%s: %.2f%%" % (clf.model.metrics_names[1], scores[1]*100))
-
-    test_score = clf.score(X_test, Y_test)
-    test_predict = clf.predict(X_test)
-
-    print "keras test_score:", test_score
-    print "keras test_predict:", test_predict
-
-    # serialize model to YAML
-    model_yaml = clf.model.to_yaml()
-    with open(model_loc, "w") as yaml_file:
-        yaml_file.write(model_yaml)
-    # serialize weights to HDF5
-    clf.model.save_weights(weights_loc)
-    print("Saved model to disk")
-
-
-    # saving model
-    # model_yaml = clf.model.to_yaml()
-    # open(model_loc, 'w').write(json_model)
-    # with open("model.yaml", "w") as yaml_file:
-        # yaml_file.write(model_yaml)
-    # saving weights
-    # clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
-'''
-
-'''
-def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5", input_data="../test/TADPOLE_test.csv"):
-
-    predict_csv = GetModelDataCSV(input_data)
-    # return model_dp
-
-    predict_csv = SplitClassData(indata=predict_csv, file=False)
-    split_classes = TransformData(predict_csv)
-
-    predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
-    predict_lbl = np.array(split_classes['DXCHANGE'])
-
-    predict_data = preprocessing.scale(predict_data)
-
-    # encode class values as integers
-    encoder = LabelEncoder()
-    encoder.fit(predict_lbl)
-    encoded_Y = encoder.transform(predict_lbl)
-    # convert integers to dummy variables (i.e. one hot encoded)
-    dummy_Y = np_utils.to_categorical(encoded_Y)
-
-    # clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
-
-
-    # loading model
-    # yaml_file = open('model.yaml', 'r')
-    # loaded_model_yaml = yaml_file.read()
-    # yaml_file.close()
-    # clf = model_from_json(open(model_loc).read())
-
-    # clf = model_from_yaml(loaded_model_yaml)
-
-    # clf.load_weights("../trained_model/keras/kerasmodel2.h5")
-    # clf.compile(loss='categorical_crossentropy', optimizer='adam')
-
-
-    # load YAML and create model
-    yaml_file = open(model_loc, 'r')
-    loaded_model_yaml = yaml_file.read()
-    yaml_file.close()
-    clf = model_from_yaml(loaded_model_yaml)
-    # load weights into new model
-    clf.load_weights(weights_loc)
-    print("Loaded model from disk")
-
-    # evaluate loaded model on test data
-    clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-    score = clf.evaluate(predict_data, dummy_Y, verbose=0)
-    print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
-
-    # clf = load_model("../trained_model/keras/kerasmodel2.h5")
-
-    # clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
-    # load json and create model
-    # json_file = open('model.json', 'r')
-    # loaded_model_json = json_file.read()
-    # json_file.close()
-    # clf.model = model_from_json(loaded_model_json)
-    # load weights into new model
-    # clf.model.load_weights("model.h5")
-    # print("Loaded model from disk")
-
-    # evaluate loaded model on test data
-    # loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-    # score = loaded_model.evaluate(X, Y, verbose=0)
-    # print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
-
-    # evaluate loaded model on test data
-    # loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-
-    prediction = clf.predict(predict_data)
-    # for pred in prediction:
-    prediction = [np.argmax(pred) for pred in prediction]
-    probability = clf.predict_proba(predict_data)
-    # print "**Prediction**", pred
-    # print "**probability**", probability
-
-    results = predict_csv[['RID', 'DXCHANGE']].copy()
-    results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
-
-    scores = accuracy_score(results['DXCHANGE'], results['results'])
-    print scores
-
-    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
-    print conf_mat
-
-    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
-
-    # results.to_csv(r"../../results/kerasresults.csv",index=False)
-
-    return results
-
-    # results.to_csv(r"/trunk/results/keras2results.csv",index=False)
-'''
-
 def keras_trainCN(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model/keras/kerasmodel4CN.yaml', weights_loc="../trained_model/keras/kerasmodel4CN.h5"):
 
     # fix random seed for reproducibility
@@ -1177,6 +1018,64 @@ def rfc_results():
     for item in sorted([(round(np.mean(dict_load), 8), feat) for feat, dict_load in dict_load.items()], reverse=True)[:20]:
         print item
 
+# ------------------------ Extreme Gradient Boost ---------------------
+def xgboost_train(src=r"../train/TADPOLE_train_MCI.csv"):
+    model_data = GetModelDataCSV(src)
+    split_classes = SplitClassDataCN(indata=model_data, file=False)
+    tdata = TransformData(split_classes)
+
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
+    Y = np.array([Resulbinarizer(label) for label in Y])
+
+    X = preprocessing.scale(X)
+
+    names = list(tdata.drop(['DXCHANGE'], 1).columns.values)
+
+    Y = Y.reshape(-1, 1)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, Y,test_size = 0.2, random_state=42)
+
+    DM_train = xgb.DMatrix(data = X_train,
+                       label = y_train)
+    DM_test =  xgb.DMatrix(data = X_test,
+                           label = y_test)
+
+    gbm_param_grid = {
+     'colsample_bytree': np.linspace(0.5, 0.9, 5),
+     'n_estimators':[100, 200],
+     'max_depth': [10, 15, 20, 25] }
+
+    gbm = xgb.XGBRegressor()
+
+    grid_mse = GridSearchCV(estimator = gbm, param_grid = gbm_param_grid, scoring = 'neg_mean_squared_error', cv = 5, verbose = 1)
+
+    # grid_mse.fit(X_train, y_train)
+    print("Best parameters found: ",grid_mse.best_params_)
+    print("Lowest RMSE found: ", np.sqrt(np.abs(grid_mse.best_score_)))
+
+    scores = defaultdict(list)
+
+    #crossvalidate the scores on a number of different random splits of the data
+    for train_idx, test_idx in ShuffleSplit(len(X), 100, .3):
+        X_train, X_test = X[train_idx], X[test_idx]
+        Y_train, Y_test = Y[train_idx], Y[test_idx]
+        r = grid_mse.fit(X_train, Y_train)
+        acc = r2_score(Y_test, rf.predict(X_test))
+        for i in range(X.shape[1]):
+            X_t = X_test.copy()
+            np.random.shuffle(X_t[:, i])
+            shuff_acc = r2_score(Y_test, rf.predict(X_t))
+            scores[names[i]].append((acc-shuff_acc)/acc)
+    print "Features sorted by their score:"
+    for item in sorted([(round(np.mean(score), 8), feat) for feat, score in scores.items()], reverse=True)[:20]:
+        print item
+
+    # json.dump(scores, open('../trained_model/random_forest/rfr_scores2.json', 'w'))
+
+def xgboost_test():
+    pass
+
 # ------------------------ Helper Functions ---------------------------
 
 def TransformData(data):
@@ -1448,10 +1347,10 @@ def SplitClassDataCN(indata=r"/trunk/src/train/TADPOLE_train.csv", file=True):
 
 if __name__ == "__main__":
     # knn_train()
-    knn_predict()
+    # knn_predict()
 
     # svm_train()
-    svm_predict()
+    # svm_predict()
 
     # kmeans_train()
     # kmeans_predict()
@@ -1462,11 +1361,177 @@ if __name__ == "__main__":
     # TestModel()
 
     # keras_trainCN()
-    keras_testCN()
+    # keras_testCN()
 
     # keras_train_time()
     # keras_test_time()
-    keras_test_time2()
+    # keras_test_time2()
 
-    # random_forest_regressor()
+    random_forest_regressor()
     # rfc_results()
+
+    xgboost_train()
+
+# ----------------------Replaced Functions (OLD)--------------------------
+'''
+def keras_train(src=r"../train/TADPOLE_train.csv", model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5"):
+
+    # fix random seed for reproducibility
+    seed = 7
+    np.random.seed(seed)
+
+    model_data = GetModelDataCSV(src)
+    split_classes = SplitClassDataCN(indata=model_data, file=False)
+    tdata = TransformData(split_classes)
+    # original_X_cp = pd.DataFrame.copy(tdata)
+
+    X = np.array(tdata.drop(['DXCHANGE'], 1))
+    Y = np.array(tdata['DXCHANGE'])
+    Y = np.array([ResulbinarizerCN(label) for label in Y])
+
+    X = preprocessing.scale(X)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(Y)
+    encoded_Y = encoder.transform(Y)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    clf = KerasClassifier(build_fn=baseline_model, epochs=50, batch_size=5, verbose=1)
+    # clf = baseline_model()
+
+    # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
+
+    # results = cross_val_score(clf, X, dummy_Y, cv=kfold)
+    # print("Result: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+
+    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, dummy_Y, test_size=0.2)
+
+    # filepath = "../trained_model/keras/kerasmodel2.h5"
+    # checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=0, save_best_only=True, mode='min')
+    # callbacks_list = [checkpoint]
+
+    clf.fit(X_train, Y_train) # , callbacks=callbacks_list)
+
+    scores = clf.model.evaluate(X_train, Y_train, verbose=0)
+    print("%s: %.2f%%" % (clf.model.metrics_names[1], scores[1]*100))
+
+    test_score = clf.score(X_test, Y_test)
+    test_predict = clf.predict(X_test)
+
+    print "keras test_score:", test_score
+    print "keras test_predict:", test_predict
+
+    # serialize model to YAML
+    model_yaml = clf.model.to_yaml()
+    with open(model_loc, "w") as yaml_file:
+        yaml_file.write(model_yaml)
+    # serialize weights to HDF5
+    clf.model.save_weights(weights_loc)
+    print("Saved model to disk")
+
+
+    # saving model
+    # model_yaml = clf.model.to_yaml()
+    # open(model_loc, 'w').write(json_model)
+    # with open("model.yaml", "w") as yaml_file:
+        # yaml_file.write(model_yaml)
+    # saving weights
+    # clf.model.save_weights("../trained_model/keras/kerasmodel2.h5")
+'''
+
+'''
+def keras_test(model_loc='../trained_model/keras/kerasmodel2.yaml', weights_loc="../trained_model/keras/kerasmodel2.h5", input_data="../test/TADPOLE_test.csv"):
+
+    predict_csv = GetModelDataCSV(input_data)
+    # return model_dp
+
+    predict_csv = SplitClassData(indata=predict_csv, file=False)
+    split_classes = TransformData(predict_csv)
+
+    predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
+    predict_lbl = np.array(split_classes['DXCHANGE'])
+
+    predict_data = preprocessing.scale(predict_data)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(predict_lbl)
+    encoded_Y = encoder.transform(predict_lbl)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    # clf = build_by_loading() # KerasClassifier(build_fn=build_by_loading, nb_epoch=10, batch_size=5, verbose=1)
+
+
+    # loading model
+    # yaml_file = open('model.yaml', 'r')
+    # loaded_model_yaml = yaml_file.read()
+    # yaml_file.close()
+    # clf = model_from_json(open(model_loc).read())
+
+    # clf = model_from_yaml(loaded_model_yaml)
+
+    # clf.load_weights("../trained_model/keras/kerasmodel2.h5")
+    # clf.compile(loss='categorical_crossentropy', optimizer='adam')
+
+
+    # load YAML and create model
+    yaml_file = open(model_loc, 'r')
+    loaded_model_yaml = yaml_file.read()
+    yaml_file.close()
+    clf = model_from_yaml(loaded_model_yaml)
+    # load weights into new model
+    clf.load_weights(weights_loc)
+    print("Loaded model from disk")
+
+    # evaluate loaded model on test data
+    clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    score = clf.evaluate(predict_data, dummy_Y, verbose=0)
+    print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
+
+    # clf = load_model("../trained_model/keras/kerasmodel2.h5")
+
+    # clf = KerasClassifier(build_fn=baseline_model, epochs=200, batch_size=5, verbose=1)
+    # load json and create model
+    # json_file = open('model.json', 'r')
+    # loaded_model_json = json_file.read()
+    # json_file.close()
+    # clf.model = model_from_json(loaded_model_json)
+    # load weights into new model
+    # clf.model.load_weights("model.h5")
+    # print("Loaded model from disk")
+
+    # evaluate loaded model on test data
+    # loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    # score = loaded_model.evaluate(X, Y, verbose=0)
+    # print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
+
+    # evaluate loaded model on test data
+    # loaded_model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+
+    prediction = clf.predict(predict_data)
+    # for pred in prediction:
+    prediction = [np.argmax(pred) for pred in prediction]
+    probability = clf.predict_proba(predict_data)
+    # print "**Prediction**", pred
+    # print "**probability**", probability
+
+    results = predict_csv[['RID', 'DXCHANGE']].copy()
+    results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
+
+    scores = accuracy_score(results['DXCHANGE'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
+    print conf_mat
+
+    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
+
+    # results.to_csv(r"../../results/kerasresults.csv",index=False)
+
+    return results
+
+    # results.to_csv(r"/trunk/results/keras2results.csv",index=False)
+'''

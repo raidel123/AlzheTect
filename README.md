@@ -38,8 +38,8 @@ Pandas
 
 ## Run
 ```
-    $ python trunk/src/alzhetect.py
+    $ python trunk/__init__.py
 ```
 
 ## Results
-After executing the main script using the command above ([Run](#Run)), the results will be saved to the results directory located in "trunk/results". The results are based on the patients from the test file, located in the directory "trunk/src/test/TADPOLE_test.csv". Although the test file contains the patient diagnosis, during prediction it is omitted and then compared.
+After executing the main script using the command above ([Run](#Run)), the results will be saved to the results directory located in "trunk/results". The results are based on the patients from the test file, located in the directory "trunk/src/test/TADPOLE_test_MCI.csv". Although the test file contains the patient diagnosis, during prediction it is omitted and then compared.
