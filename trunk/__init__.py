@@ -102,9 +102,9 @@ def AlzhetectPage():
        # print io.StringIO(unicode(in_file)).getvalue()
 
        # kmeans_pred = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file))
-       knn_pred = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel2.pickle", input_data=deepcopy(in_file))
-       svm_pred = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel2.pickle", input_data=deepcopy(in_file))
-       keras_pred =  ml.keras_testCN(model_loc=appContext+"/src/trained_model/keras/kerasmodel2CN.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2CN.h5", input_data=deepcopy(in_file), appcontext=appContext)
+       knn_pred = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel4.pickle", input_data=deepcopy(in_file))
+       svm_pred = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel4.pickle", input_data=deepcopy(in_file))
+       keras_pred =  ml.keras_testCN(model_loc=appContext+"/src/trained_model/keras/kerasmodel4CN.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel4CN.h5", input_data=deepcopy(in_file), appcontext=appContext)
 
        result_vals = {}
        # result_vals['kmeans'] = kmeans_pred.values.tolist()
