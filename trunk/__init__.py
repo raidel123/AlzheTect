@@ -80,8 +80,7 @@ def AlzhetectPage():
 
     patient_input_fields = {"field_name":field_name, "field_type":field_type}
 
-    algo_accuracy = [ {"a_id":"kmeans", "a_name":"K-Means Clustering", "a_accuracy":80},
-                      {"a_id":"knn", "a_name":"K-Nearest Neighbors", "a_accuracy":95},
+    algo_accuracy = [ {"a_id":"knn", "a_name":"K-Nearest Neighbors", "a_accuracy":95},
                       {"a_id":"svm", "a_name":"Support Vector Machine", "a_accuracy":97},
                       {"a_id":"dnn", "a_name":"Deep Neural Network", "a_accuracy":99}
                     ]
@@ -108,13 +107,13 @@ def AlzhetectPage():
        keras_pred =  ml.keras_testCN(model_loc=appContext+"/src/trained_model/keras/kerasmodel2CN.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel2CN.h5", input_data=deepcopy(in_file), appcontext=appContext)
 
        result_vals = {}
-       result_vals['kmeans'] = kmeans_pred.values.tolist()
+       # result_vals['kmeans'] = kmeans_pred.values.tolist()
        result_vals['knn'] = knn_pred.values.tolist()
        result_vals['svm'] = svm_pred.values.tolist()
        result_vals['keras'] = keras_pred.values.tolist()
 
        result_cols = {}
-       result_cols['kmeans'] =kmeans_pred.columns.tolist()
+       # result_cols['kmeans'] =kmeans_pred.columns.tolist()
        result_cols['knn'] = knn_pred.columns.tolist()
        result_cols['svm'] = svm_pred.columns.tolist()
        result_cols['keras'] = keras_pred.columns.tolist()

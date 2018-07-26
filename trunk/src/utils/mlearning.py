@@ -1053,10 +1053,10 @@ def xgboost_train(src=r"../train/TADPOLE_train_MCI.csv"):
     # grid_mse.fit(X_train, y_train)
     print("Best parameters found: ",grid_mse.best_params_)
     print("Lowest RMSE found: ", np.sqrt(np.abs(grid_mse.best_score_)))
-
+    '''
     scores = defaultdict(list)
 
-    #crossvalidate the scores on a number of different random splits of the data
+    # crossvalidate the scores on a number of different random splits of the data
     for train_idx, test_idx in ShuffleSplit(len(X), 100, .3):
         X_train, X_test = X[train_idx], X[test_idx]
         Y_train, Y_test = Y[train_idx], Y[test_idx]
@@ -1072,6 +1072,7 @@ def xgboost_train(src=r"../train/TADPOLE_train_MCI.csv"):
         print item
 
     # json.dump(scores, open('../trained_model/random_forest/rfr_scores2.json', 'w'))
+'''
 
 def xgboost_test():
     pass
