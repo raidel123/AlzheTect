@@ -115,7 +115,7 @@ def knn_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model
 
     # knn_predict()
 
-def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data="../test/TADPOLE_test_MCI.csv"):
+def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data="../test/TADPOLE_test_MCI.csv", appcontext=None):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
@@ -127,18 +127,25 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data=".
     split_classes = TransformData(predict_csv)
 
     predict_data = np.array(split_classes.drop(['DXCHANGE'], 1))
+    predict_lbl = np.array(split_classes['DXCHANGE'])
 
     predict_data = preprocessing.scale(predict_data)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(predict_lbl)
+    encoded_Y = encoder.transform(predict_lbl)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
 
     prediction = clf.predict(predict_data)
     # print "**Predict Accuracy**", prediction
     probability = clf.predict_proba(predict_data)
     # print "**probability**", probability
 
-
-
     results = predict_csv[['RID', 'DXCHANGE']].copy()
     results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
+    results['MONTHSAD'] = [None] * len(results['results'])
 
     scores = accuracy_score(results['DXCHANGE'], results['results'])
     print scores
@@ -162,6 +169,36 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data=".
     plt.ylabel("True")
     plt.savefig('knn_heatmap_dx.png')
     '''
+
+    list_indexes = []
+    for i in range(len(results['results'])):
+        if results['results'][i] == 5:
+            list_indexes.append(i)
+            # print "i:", i
+
+    # print "len:", len(list_indexes)
+    # print len(results['results'])
+    extra_test_cases = []
+    y_pred = []
+    for i in list_indexes:
+        extra_test_cases.append(predict_csv.values.tolist()[i])
+
+    print "Type:", type(extra_test_cases)
+    extra_pd = pd.DataFrame(extra_test_cases, columns=predict_csv.columns.tolist())
+
+
+    if appcontext is None:
+        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc='../trained_model/keras/kerasmodel2time.h5', local=False)
+    else:
+        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5', local=False)
+    # print results
+
+    index = 0
+    time_results_class = time_results['results'].values.tolist()
+    for index2 in range(len(results['results'])):
+        if results['results'][index2] == 5:
+            results['MONTHSAD'][index2] = time_results_class[index]
+            index+=1
 
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
@@ -223,7 +260,7 @@ def svm_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model
 
     # svm_predict()
 
-def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data="../test/TADPOLE_test_MCI.csv"):
+def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data="../test/TADPOLE_test_MCI.csv", appcontext=None):
 
     trained_classifier = open(model_loc ,'rb')
     clf = pickle.load(trained_classifier)
@@ -245,6 +282,7 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data=".
 
     results = predict_csv[['RID', 'DXCHANGE']].copy()
     results['results'] = [ResulUnbinarizerCN(pred) for pred in prediction]
+    results['MONTHSAD'] = [None] * len(results['results'])
 
     scores = accuracy_score(results['DXCHANGE'], results['results'])
     print scores
@@ -260,6 +298,36 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data=".
     plt.ylabel("True")
     plt.savefig('svm-dx-heatmap.png')
     '''
+
+    list_indexes = []
+    for i in range(len(results['results'])):
+        if results['results'][i] == 5:
+            list_indexes.append(i)
+            # print "i:", i
+
+    # print "len:", len(list_indexes)
+    # print len(results['results'])
+    extra_test_cases = []
+    y_pred = []
+    for i in list_indexes:
+        extra_test_cases.append(predict_csv.values.tolist()[i])
+
+    print "Type:", type(extra_test_cases)
+    extra_pd = pd.DataFrame(extra_test_cases, columns=predict_csv.columns.tolist())
+
+
+    if appcontext is None:
+        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc='../trained_model/keras/kerasmodel2time.h5', local=False)
+    else:
+        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5', local=False)
+    # print results
+
+    index = 0
+    time_results_class = time_results['results'].values.tolist()
+    for index2 in range(len(results['results'])):
+        if results['results'][index2] == 5:
+            results['MONTHSAD'][index2] = time_results_class[index]
+            index+=1
 
     results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
 
@@ -655,9 +723,9 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel4CN.yaml', weights_
     print("Loaded model from disk")
 
     # evaluate loaded model on test data
-    clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
-    score = clf.evaluate(predict_data, dummy_Y, verbose=0)
-    print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
+    # clf.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    # score = clf.evaluate(predict_data, dummy_Y, verbose=0)
+    # print("%s: %.2f%%" % (clf.metrics_names[1], score[1]*100))
 
     prediction = clf.predict(predict_data)
     # for pred in prediction:
@@ -715,8 +783,8 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel4CN.yaml', weights_
             results['MONTHSAD'][index2] = time_results_class[index]
             index+=1
 
-    print results
-    print results.values.tolist()
+    # print results
+    # print results.values.tolist()
     '''
     scores = accuracy_score(results['DXCHANGE'], results['results'])
     print scores
@@ -1011,8 +1079,6 @@ def random_forest_regressor(src=r"../train/TADPOLE_train_MCI.csv"):
 
     json.dump(scores, open('../trained_model/random_forest/rfr_scores2.json', 'w'))
 
-
-
 def rfc_results():
     dict_load = json.load(open('../trained_model/random_forest/rfr_scores2.json', 'r'))
     for item in sorted([(round(np.mean(dict_load), 8), feat) for feat, dict_load in dict_load.items()], reverse=True)[:20]:
@@ -1075,7 +1141,7 @@ def xgboost_train(src=r"../train/TADPOLE_train_MCI.csv"):
         print item
 
     # json.dump(scores, open('../trained_model/random_forest/rfr_scores2.json', 'w'))
-'''
+    '''
 
 def xgboost_test():
     pass
@@ -1372,9 +1438,9 @@ if __name__ == "__main__":
     # keras_test_time2()
 
     # random_forest_regressor()
-    # rfc_results()
+    rfc_results()
 
-    xgboost_train()
+    # xgboost_train()
 
 # ----------------------Replaced Functions (OLD)--------------------------
 '''
