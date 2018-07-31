@@ -108,15 +108,15 @@ def AlzhetectPage():
 
        result_vals = {}
        # result_vals['kmeans'] = kmeans_pred.values.tolist()
-       result_vals['knn'] = knn_pred.values.tolist()
-       result_vals['svm'] = svm_pred.values.tolist()
-       result_vals['keras'] = keras_pred.values.tolist()
+       result_vals['KNN'] = knn_pred.values.tolist()
+       result_vals['SVM'] = svm_pred.values.tolist()
+       result_vals['DNN'] = keras_pred.values.tolist()
 
        result_cols = {}
        # result_cols['kmeans'] =kmeans_pred.columns.tolist()
-       result_cols['knn'] = knn_pred.columns.tolist()
-       result_cols['svm'] = svm_pred.columns.tolist()
-       result_cols['keras'] = keras_pred.columns.tolist()
+       result_cols['KNN'] = knn_pred.columns.tolist()
+       result_cols['SVM'] = svm_pred.columns.tolist()
+       result_cols['DNN'] = keras_pred.columns.tolist()
 
        results['result_cols'] = result_cols
        results['result_vals'] = result_vals
