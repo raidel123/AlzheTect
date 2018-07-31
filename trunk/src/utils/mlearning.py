@@ -41,18 +41,20 @@ from keras.utils import np_utils
 from keras.models import model_from_yaml
 from keras.models import load_model
 from keras.callbacks import ModelCheckpoint
+from keras.utils import plot_model
 from keras import backend as K
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import ShuffleSplit
 from sklearn.metrics import r2_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import StratifiedShuffleSplit
 from collections import defaultdict
 
 '''
@@ -88,10 +90,37 @@ def knn_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model
     # print X, Y
     # print (len(X), len(Y))
 
-    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
+    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2, random_state=7)
 
-    clf = neighbors.KNeighborsClassifier(n_jobs=-1)
-    # clf = svm.SVR()
+    # kfolds cross validation
+    # creating odd list of K for KNN
+    neighbors_lst = list(range(1,50,2))
+
+    # empty list that will hold cv scores
+    cv_scores = []
+
+    # perform 10-fold cross validation
+    for k in neighbors_lst:
+        knn = neighbors.KNeighborsClassifier(n_neighbors=k)
+        scores = cross_val_score(knn, X_train, Y_train, cv=10, scoring='accuracy')
+        cv_scores.append(scores.mean())
+
+    # changing to misclassification error
+    MSE = [1 - x for x in cv_scores]
+
+    # determining best k
+    optimal_k = neighbors_lst[MSE.index(min(MSE))]
+    print "The optimal number of neighbors is %d" % optimal_k
+
+    '''
+    # plot misclassification error vs k
+    plt.plot(neighbors_lst, MSE)
+    plt.xlabel('Number of Neighbors K')
+    plt.ylabel('Misclassification Error')
+    plt.savefig('foo.png')
+    '''
+
+    clf = neighbors.KNeighborsClassifier(n_neighbors=optimal_k, n_jobs=-1)
     clf.fit(X_train, Y_train)
 
     with open(model_loc, 'wb') as f:
@@ -121,8 +150,6 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data=".
     clf = pickle.load(trained_classifier)
 
     predict_csv = GetModelDataCSV(input_data)
-    # return model_dp
-
     predict_csv = SplitClassDataCN(indata=predict_csv, file=False)
     split_classes = TransformData(predict_csv)
 
@@ -161,14 +188,14 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data=".
     py.plot(data, filename='knn-dx-heatmap')
     '''
 
-    '''
+
     fig2=plt.figure()
     fig2.add_subplot(111)
     sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.savefig('knn_heatmap_dx.png')
-    '''
+
 
     list_indexes = []
     for i in range(len(results['results'])):
@@ -188,9 +215,9 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data=".
 
 
     if appcontext is None:
-        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc='../trained_model/keras/kerasmodel2time.h5', local=False)
+        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc='../trained_model/keras/kerasmodel4time.h5', local=False)
     else:
-        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5', local=False)
+        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel4time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel4time.h5', local=False)
     # print results
 
     index = 0
@@ -210,15 +237,6 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data=".
 
     return results
 
-    # Plot outputs
-    # plt.scatter(X_test[:,0], Y_test,  color='black')
-    # plt.plot(X_test, test_accuracy2, color='blue', linewidth=3)
-
-    # plt.xticks(())
-    # plt.yticks(())
-
-    # plt.savefig('foo2.png')
-
 # ------------------------ SVM Classifier ---------------------------
 
 def svm_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model/svm/svmmodel4.pickle'):
@@ -235,9 +253,64 @@ def svm_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model
     # print X, Y
     # print (len(X), len(Y))
 
+    '''
+    # parameter tuning
+    n_splits = 10
+    sss = StratifiedShuffleSplit(n_splits=n_splits, test_size=0.1, random_state=0)
+
+    log_cols = ["C", "gamma", "Accuracy"]
+    log 	 = pd.DataFrame(columns=log_cols)
+
+    acc_dict = {}
+
+    for train_index, test_index in sss.split(X, Y):
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = Y[train_index], Y[test_index]
+
+
+        for lambd in [0.0001, 0.001, 0.01, 0.03, 0.1, 0.3, 1]:
+            for gamma in [1.0E-4, 1.0E-3, 1.0E-2, 1.0E-1, 1.0, 10.0]:
+
+                clf = svm.SVC(probability=True, C=1/lambd, gamma=gamma)
+                clf.fit(X_train, y_train)
+                train_predictions = clf.predict(X_test)
+                acc = accuracy_score(y_test, train_predictions)
+                if lambd in acc_dict:
+                    if gamma in acc_dict[lambd]:
+                        acc_dict[lambd][gamma] += acc
+                    else:
+                        acc_dict[lambd][gamma] = acc
+                else:
+                    acc_dict[lambd] = {}
+                    acc_dict[lambd][gamma] = acc
+
+
+    for lambd in acc_dict:
+        for gamma in acc_dict[lambd]:
+            acc_value = acc_dict[lambd][gamma] / n_splits
+            log_entry = pd.DataFrame([[lambd, gamma, acc_value]], columns=log_cols)
+            log = log.append(log_entry)
+
+    #print ('Classifier Accuracy')
+    #print (log)
+    #print ()
+
+    plt.figure()
+
+    plt.xlabel('Accuracy')
+    plt.title('Classifier Accuracy')
+
+    heatmap_data = log.pivot("C", "gamma", "Accuracy")
+    ax = sns.heatmap(heatmap_data, annot=True, fmt='.3f')
+    plt.savefig('foo4.png')
+    '''
+
+    lambd = 0.001
+    gamma = 0.001
+
     X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
 
-    clf = svm.SVC(probability=True)
+    clf = svm.SVC(probability=True, C=1/lambd, gamma=gamma)
     clf.fit(X_train, Y_train)
 
     with open(model_loc, 'wb') as f:
@@ -259,6 +332,7 @@ def svm_train(src=r"../train/TADPOLE_train_MCI.csv", model_loc='../trained_model
     # plt.savefig('foo.png')
 
     # svm_predict()
+
 
 def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data="../test/TADPOLE_test_MCI.csv", appcontext=None):
 
@@ -290,14 +364,12 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data=".
     conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
     print conf_mat
 
-    '''
     fig2=plt.figure()
     fig2.add_subplot(111)
     sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.savefig('svm-dx-heatmap.png')
-    '''
 
     list_indexes = []
     for i in range(len(results['results'])):
@@ -317,9 +389,9 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data=".
 
 
     if appcontext is None:
-        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc='../trained_model/keras/kerasmodel2time.h5', local=False)
+        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc='../trained_model/keras/kerasmodel4time.h5', local=False)
     else:
-        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5', local=False)
+        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel4time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel4time.h5', local=False)
     # print results
 
     index = 0
@@ -771,9 +843,9 @@ def keras_testCN(model_loc='../trained_model/keras/kerasmodel4CN.yaml', weights_
 
 
     if appcontext is None:
-        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel2time.yaml', weights_loc='../trained_model/keras/kerasmodel2time.h5', local=False)
+        time_results = keras_test_time(input_data=extra_pd, model_loc='../trained_model/keras/kerasmodel4time.yaml', weights_loc='../trained_model/keras/kerasmodel4time.h5', local=False)
     else:
-        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel2time.h5', local=False)
+        time_results = keras_test_time(input_data=extra_pd, model_loc=appcontext+'/src/trained_model/keras/kerasmodel4time.yaml', weights_loc=appcontext+'/src/trained_model/keras/kerasmodel4time.h5', local=False)
     # print results
 
     index = 0
@@ -816,6 +888,8 @@ def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../train
 
     X = preprocessing.scale(X)
 
+    # print X
+
     # encode class values as integers
     encoder = LabelEncoder()
     encoder.fit(Y)
@@ -823,7 +897,7 @@ def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../train
     # convert integers to dummy variables (i.e. one hot encoded)
     dummy_Y = np_utils.to_categorical(encoded_Y)
 
-    clf = KerasClassifier(build_fn=baseline_model, epochs=50, batch_size=4, verbose=1)
+    clf = KerasClassifier(build_fn=baseline_model_time, epochs=200, batch_size=4, verbose=0)
     # clf = baseline_model()
 
     # kfold  = KFold(n_splits=10, shuffle=True, random_state=seed)
@@ -838,6 +912,8 @@ def keras_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../train
     # callbacks_list = [checkpoint]
 
     clf.fit(X_train, Y_train) # , callbacks=callbacks_list)
+
+    # plot_model(clf, to_file='model.png')
 
     scores = clf.model.evaluate(X_train, Y_train, verbose=0)
     print("%s: %.2f%%" % (clf.model.metrics_names[1], scores[1]*100))
@@ -1019,6 +1095,175 @@ def keras_test_time2(model_loc='../trained_model/keras/kerasmodel4time.yaml', we
 
     return results
 
+
+# ----------------------SVM predict time ---------------------------------
+def svm_train_time(src=r"../train/TADPOLE_train_time.csv", model_loc='../trained_model/svm/svmmodel4time.pickle'):
+    model_data = GetModelDataCSV2(src)
+    # split_classes = SplitClassDataCN(indata=model_data, file=False)
+    tdata = TransformData2(model_data)
+
+    X = np.array(tdata.drop(['MONTHSAD'], 1))
+    Y = np.array(tdata['MONTHSAD'])
+    Y = np.array([ResulbinarizerTime(label) for label in Y])
+
+    X = preprocessing.scale(X)
+
+    # print X, Y
+    # print (len(X), len(Y))
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(Y)
+    encoded_Y = encoder.transform(Y)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    '''
+    # parameter tuning
+    n_splits = 10
+    sss = StratifiedShuffleSplit(n_splits=n_splits, test_size=0.1, random_state=0)
+
+    log_cols = ["C", "gamma", "Accuracy"]
+    log 	 = pd.DataFrame(columns=log_cols)
+
+    acc_dict = {}
+
+    for train_index, test_index in sss.split(X, Y):
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = Y[train_index], Y[test_index]
+
+
+        for lambd in [0.0001, 0.001, 0.01, 0.03, 0.1, 0.3, 1]:
+            for gamma in [1.0E-5, 1.0E-4, 1.0E-3, 1.0E-2, 1.0E-1]:
+
+                clf = svm.SVC(probability=True, C=1/lambd, gamma=gamma)
+                clf.fit(X_train, y_train)
+                train_predictions = clf.predict(X_test)
+                acc = accuracy_score(y_test, train_predictions)
+                if lambd in acc_dict:
+                    if gamma in acc_dict[lambd]:
+                        acc_dict[lambd][gamma] += acc
+                    else:
+                        acc_dict[lambd][gamma] = acc
+                else:
+                    acc_dict[lambd] = {}
+                    acc_dict[lambd][gamma] = acc
+
+
+    for lambd in acc_dict:
+        for gamma in acc_dict[lambd]:
+            acc_value = acc_dict[lambd][gamma] / n_splits
+            log_entry = pd.DataFrame([[lambd, gamma, acc_value]], columns=log_cols)
+            log = log.append(log_entry)
+
+    #print ('Classifier Accuracy')
+    #print (log)
+    #print ()
+
+    plt.figure()
+
+    plt.xlabel('Accuracy')
+    plt.title('Classifier Accuracy')
+
+    heatmap_data = log.pivot("C", "gamma", "Accuracy")
+    ax = sns.heatmap(heatmap_data, annot=True, fmt='.3f')
+    plt.savefig('time.png')
+    '''
+
+    lambd = 0.03
+    gamma = 0.001
+
+    X_train, X_test, Y_train, Y_test = cross_validation.train_test_split(X, Y, test_size=0.2)
+
+    clf = svm.SVC(probability=True, C=1/lambd, gamma=gamma)
+    clf.fit(X_train, Y_train)
+
+    with open(model_loc, 'wb') as f:
+        pickle.dump(clf, f)
+
+    test_score = clf.score(X_test, Y_test)
+    test_predict = clf.predict(X_test)
+
+    print "SVM test score:", test_score
+    print "SVM test predict:", test_predict
+
+    # Plot outputs
+    # plt.scatter(X_test[:,0], Y_test,  color='black')
+    # plt.plot(X_test, test_predict, color='blue', linewidth=3)
+
+    # plt.xticks(())
+    # plt.yticks(())
+
+    # plt.savefig('foo.png')
+
+    # svm_predict()
+
+
+def svm_predict_time(model_loc='../trained_model/svm/svmmodel4time.pickle', input_data="../test/TADPOLE_test_time.csv"):
+
+    trained_classifier = open(model_loc ,'rb')
+    clf = pickle.load(trained_classifier)
+
+    predict_csv = GetModelDataCSV2(input_data)
+    # return model_dp
+
+    # predict_csv = SplitClassDataCN(indata=predict_csv, file=False)
+    split_classes = TransformData2(predict_csv)
+
+    predict_data = np.array(split_classes.drop(['MONTHSAD'], 1))
+    predict_lbl = np.array(split_classes['MONTHSAD'])    # split_classes['MONTHSAD']) # com1
+
+    predict_data = preprocessing.scale(predict_data)
+
+    # encode class values as integers
+    encoder = LabelEncoder()
+    encoder.fit(predict_lbl)
+    encoded_Y = encoder.transform(predict_lbl)
+    # convert integers to dummy variables (i.e. one hot encoded)
+    dummy_Y = np_utils.to_categorical(encoded_Y)
+
+    prediction = clf.predict(predict_data)
+    probability = clf.predict_proba(predict_data)
+    # print "**Prediction**", prediction
+    # print "**probability**", probability
+
+    results = predict_csv[['RID', 'MONTHSAD']].copy()
+    results['results'] = [ResulUnbinarizerTime(pred) for pred in prediction]
+    # results['MONTHSAD'] = [None] * len(results['results'])
+
+    scores = accuracy_score(results['MONTHSAD'], results['results'])
+    print scores
+
+    conf_mat = confusion_matrix(results['MONTHSAD'], results['results'])
+    print conf_mat
+
+    '''
+    fig2=plt.figure()
+    fig2.add_subplot(111)
+    sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
+    plt.xlabel("Predicted")
+    plt.ylabel("True")
+    plt.savefig('svm-dx-heatmap.png')
+    '''
+
+    results['probability'] = [probability[p][prediction[p]] for p in range(len(prediction))]
+
+    # print results
+
+    # results.to_csv(r"../../results/svmresults.csv",index=False)
+
+    return results
+
+    # Plot outputs
+    # plt.scatter(X_test[:,0], Y_test,  color='black')
+    # plt.plot(X_test, test_accuracy2, color='blue', linewidth=3)
+
+    # plt.xticks(())
+    # plt.yticks(())
+
+    # plt.savefig('foo2.png')
+
+
 def build_by_loading():
     model = load_model('../trained_model/keras/kerasmodel2.h5')
     return model
@@ -1046,6 +1291,31 @@ def baseline_model():
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
+# define baseline model
+def baseline_model_time():
+    # create model
+    model = Sequential()
+
+    #model.add(Dense(128, activation='relu'))
+    #model.add(Dense(128, activation='tanh'))
+    #model.add(Dense(128, activation='relu'))
+    model.add(Dense(20, activation='relu'))
+    model.add(Dense(20, activation='relu'))
+    model.add(Dense(20, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(16, activation='relu'))
+    model.add(Dense(12, activation='relu'))
+    model.add(Dense(12, activation='relu'))
+    model.add(Dense(12, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(8, activation='relu'))
+    model.add(Dense(4, activation='softmax'))
+    # Compile model
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
+
 def random_forest_regressor(src=r"../train/TADPOLE_train_MCI.csv"):
     model_data = GetModelDataCSV(src)
     split_classes = SplitClassDataCN(indata=model_data, file=False)
@@ -1059,7 +1329,7 @@ def random_forest_regressor(src=r"../train/TADPOLE_train_MCI.csv"):
 
     names = list(tdata.drop(['DXCHANGE'], 1).columns.values)
 
-    rf = RandomForestRegressor(n_estimators=500, max_features=20, n_jobs=-1, verbose=1)
+    rf = RandomForestClassifier(n_estimators=500, max_features=20, n_jobs=-1, verbose=1)
     scores = defaultdict(list)
 
     #crossvalidate the scores on a number of different random splits of the data
@@ -1430,15 +1700,18 @@ if __name__ == "__main__":
     # TrainModel()
     # TestModel()
 
-    # keras_trainCN()
-    # keras_testCN()
+    keras_trainCN()
+    keras_testCN()
 
     # keras_train_time()
     # keras_test_time()
     # keras_test_time2()
 
+    # svm_train_time()
+    # svm_predict_time()
+
     # random_forest_regressor()
-    rfc_results()
+    # rfc_results()
 
     # xgboost_train()
 

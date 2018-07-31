@@ -80,9 +80,9 @@ def AlzhetectPage():
 
     patient_input_fields = {"field_name":field_name, "field_type":field_type}
 
-    algo_accuracy = [ {"a_id":"knn", "a_name":"K-Nearest Neighbors", "a_accuracy":62},
-                      {"a_id":"svm", "a_name":"Support Vector Machine", "a_accuracy":67},
-                      {"a_id":"dnn", "a_name":"Deep Neural Network", "a_accuracy":70}
+    algo_accuracy = [ {"a_id":"knn", "a_name":"K-Nearest Neighbors", "a_accuracy":65},
+                      {"a_id":"svm", "a_name":"Support Vector Machine", "a_accuracy":75},
+                      {"a_id":"dnn", "a_name":"Deep Neural Network", "a_accuracy":68}
                     ]
 
     db.CloseConnection(conn)
