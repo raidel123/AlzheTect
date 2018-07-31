@@ -188,14 +188,14 @@ def knn_predict(model_loc='../trained_model/knn/knnmodel4.pickle', input_data=".
     py.plot(data, filename='knn-dx-heatmap')
     '''
 
-
+    '''
     fig2=plt.figure()
     fig2.add_subplot(111)
     sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.savefig('knn_heatmap_dx.png')
-
+    '''
 
     list_indexes = []
     for i in range(len(results['results'])):
@@ -364,12 +364,14 @@ def svm_predict(model_loc='../trained_model/svm/svmmodel4.pickle', input_data=".
     conf_mat = confusion_matrix(results['DXCHANGE'], results['results'])
     print conf_mat
 
+    '''
     fig2=plt.figure()
     fig2.add_subplot(111)
     sns.heatmap(conf_mat,annot=True,square=True,cbar=False,fmt="d")
     plt.xlabel("Predicted")
     plt.ylabel("True")
     plt.savefig('svm-dx-heatmap.png')
+    '''
 
     list_indexes = []
     for i in range(len(results['results'])):
