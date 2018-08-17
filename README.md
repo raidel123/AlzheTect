@@ -1,5 +1,5 @@
 # AlzheTect
-Using a Deep Neural Network(DNN) to detect early Alzheimer's disease using Tensorflow.
+Using a Deep Neural Network(DNN), Support Vector Classifier(SVC), and Random Forest Regressor to detect early Alzheimer's disease using Python.
 
 ## Requirements
 The installation was performed on a [ Ubuntu 16.04 ](https://www.ubuntu.com/download/desktop) terminal.
