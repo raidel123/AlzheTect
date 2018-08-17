@@ -70,10 +70,6 @@ def AlzhetectPage():
 
     conn = db.OpenConnection(appContext + '/src/sqldb/alzhetect.db')
 
-    # query_features =
-
-    # checkboxes = GenerateCheckbox(conn, query_features)
-
     #selected_features = {"th" : query_features.keys(), "td" : query_features.values.tolist()}
     field_name = db.QueryDB("SELECT Field_Name FROM selected_features;", conn).values.tolist()
     field_type = db.QueryDB("SELECT Measurement_Type FROM selected_features;", conn).values.tolist()
@@ -101,19 +97,16 @@ def AlzhetectPage():
        # return model_dp
        # print io.StringIO(unicode(in_file)).getvalue()
 
-       # kmeans_pred = ml.kmeans_predict(model_loc=appContext+"/src/trained_model/kmeans/kmeansmodel2.pickle", input_data=deepcopy(in_file))
        knn_pred = ml.knn_predict(model_loc=appContext+"/src/trained_model/knn/knnmodel4.pickle", input_data=deepcopy(in_file), appcontext=appContext)
        svm_pred = ml.svm_predict(model_loc=appContext+"/src/trained_model/svm/svmmodel4.pickle", input_data=deepcopy(in_file), appcontext=appContext)
        keras_pred =  ml.keras_testCN(model_loc=appContext+"/src/trained_model/keras/kerasmodel4CN.yaml", weights_loc=appContext+"/src/trained_model/keras/kerasmodel4CN.h5", input_data=deepcopy(in_file), appcontext=appContext)
 
        result_vals = {}
-       # result_vals['kmeans'] = kmeans_pred.values.tolist()
        result_vals['KNN'] = knn_pred.values.tolist()
        result_vals['SVM'] = svm_pred.values.tolist()
        result_vals['DNN'] = keras_pred.values.tolist()
 
        result_cols = {}
-       # result_cols['kmeans'] =kmeans_pred.columns.tolist()
        result_cols['KNN'] = knn_pred.columns.tolist()
        result_cols['SVM'] = svm_pred.columns.tolist()
        result_cols['DNN'] = keras_pred.columns.tolist()
