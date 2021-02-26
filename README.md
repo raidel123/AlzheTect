@@ -1,6 +1,10 @@
 # AlzheTect
 Using a Deep Neural Network(DNN), Support Vector Classifier(SVC), and Random Forest Regressor to detect early Alzheimer's disease using Python.
 
+## Research Artifacts
+- [Paper](https://github.com/raidel123/AlzheTect/blob/master/docs/Graduation_Final_Report.pdf)
+- [Presentation](https://github.com/raidel123/AlzheTect/blob/master/docs/Presentation_%20AlzheTect.Bio-Marker%20Analysis%20For%20Early%20Alzheimer%E2%80%99s%20Classification.pdf)
+
 ## Requirements
 The installation was performed on a [ Ubuntu 16.04 ](https://www.ubuntu.com/download/desktop) terminal.
 
