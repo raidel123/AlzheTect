@@ -52,5 +52,5 @@ tensorboard==1.7.0
 tensorflow==1.7.0
 termcolor==1.1.0
 traitlets==4.3.2
-urllib3==1.23
+urllib3==1.26.5
 Werkzeug==0.14.1
